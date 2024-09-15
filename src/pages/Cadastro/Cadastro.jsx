@@ -56,6 +56,7 @@ function Cadastro() {
               id="tipoUsuario"
               className="border border-gray-300 rounded w-full py-2 px-3 text-gray-700"
             >
+              <option value="0" selected disabled>Selecione seu tipo de usuário</option>
               <option value="oficina">Oficina</option>
               <option value="fornecedor">Fornecedor</option>
             </select>
