@@ -1,11 +1,11 @@
-import React from 'react'
+import React from 'react';
 
 function Footer() {
   return (
-    <footer className="bg-[#14213D] py-4">
-        <p className="text-white text-center">© BNR Systems</p>
+    <footer className="footer bg-[#14213D] py-4">
+      <p className="text-white text-center">© BNR Systems</p>
     </footer>
-  )
+  );
 }
 
-export default Footer
+export default Footer;

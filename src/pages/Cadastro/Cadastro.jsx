@@ -9,9 +9,9 @@ function Cadastro() {
   };
 
   return (
-    <body className="flex flex-col p-0 m-0">
-      <main className="flex-grow flex items-center justify-center bg-[#E5E5E5] p-4">
-        <form className="bg-white rounded-lg shadow-xl p-8 w-full max-w-md sm:max-w-lg lg:max-w-lg ">
+    <div className="flex flex-col p-0 m-0">
+      <main className="flex-grow flex items-center justify-center bg-[#E5E5E5] p-4 w-96">
+        <form onSubmit={handleConfirmacao} className="bg-white rounded-lg shadow-xl p-8 w-full max-w-md sm:max-w-lg lg:max-w-lg ">
           <div className="mb-4">
             <label
               className="block text-gray-700 text-sm font-bold mb-2"
@@ -63,14 +63,13 @@ function Cadastro() {
 
           <button
             type="submit"
-            onClick={handleConfirmacao}
             className="bg-[#FCA311] text-white font-bold py-2 px-4 rounded w-full hover:bg-[#fcb645]"
           >
             Cadastrar
           </button>
         </form>
       </main>
-    </body>
+    </div>
   );
 }
 

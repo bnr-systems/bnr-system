@@ -10,7 +10,7 @@ function Header() {
     };
 
     return (
-        <header className="bg-[#14213D] py-4 flex items-center justify-between px-4">
+        <header className="header bg-[#14213D] py-4 flex items-center justify-between px-4">
             <img
                 className="w-24 h-24 ml-4 sm:ml-8 lg:ml-16 cursor-pointer"
                 src={logo}
