@@ -8,9 +8,6 @@ function Cadastro() {
   const { register, handleSubmit, formState: { errors } } = useForm();
 
   function onSubmit(data) {
-    // Você pode processar os dados aqui se necessário
-    console.log(data);
-    // Após a submissão, navega para a página de confirmação
     navigate("/Confirmacao");
   }
 
@@ -19,7 +16,7 @@ function Cadastro() {
       <main className="flex-grow flex items-center justify-center bg-[#E5E5E5] p-4 w-96">
         <form
           className="bg-white rounded-lg shadow-xl p-8 w-full max-w-md sm:max-w-lg lg:max-w-lg"
-          onSubmit={handleSubmit(onSubmit)} // Adicionando a chamada do handleSubmit aqui
+          onSubmit={handleSubmit(onSubmit)} 
         >
           <div className="mb-4">
             <label
