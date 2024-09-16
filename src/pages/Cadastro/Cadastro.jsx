@@ -11,12 +11,18 @@ function Cadastro() {
     navigate("/Confirmacao", { state: { email: data.email } });
   }
 
+  function handleKeyDown(e){
+    if (e.key === 'Enter') {
+      handleSubmit(onSubmit)(); 
+    }
+  };
   return (
     <div className="flex flex-col p-0 m-0">
       <main className="flex-grow flex items-center justify-center bg-[#E5E5E5] p-4 w-96">
         <form
           className="bg-white rounded-lg shadow-xl p-8 w-full max-w-md sm:max-w-lg lg:max-w-lg"
           onSubmit={handleSubmit(onSubmit)}
+          onKeyDown={handleKeyDown}
         >
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="nome">
