@@ -121,7 +121,7 @@ function Cadastro() {
               className={`${errors?.user ? "border-red-500" : "border-gray-400"} border rounded w-full py-2 px-3 text-gray-700`}
               {...register("user", { validate: (value) => value !== "0" })}
             >
-              <option value="0">Selecione seu tipo de usuário...</option>
+              <option value="0" selected disabled>Selecione seu tipo de usuário...</option>
               <option value="oficina">Oficina</option>
               <option value="fornecedor">Fornecedor</option>
             </select>
