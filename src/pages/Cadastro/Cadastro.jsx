@@ -19,6 +19,7 @@ function Cadastro() {
 
   function handleKeyDown(e) {
     if (e.key === 'Enter') {
+      e.preventDefault();
       handleSubmit(onSubmit)(); 
     }
   }
@@ -134,6 +135,11 @@ function Cadastro() {
           >
             Cadastrar
           </button>
+          <div className="mt-4 text-center">
+            <a href="/" className="text-sm text-gray-500 hover:text-gray-700">
+              Voltar para a tela de login
+            </a>
+          </div>
         </form>
       </main>
     </div>

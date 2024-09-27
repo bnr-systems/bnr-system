@@ -18,6 +18,7 @@ function Login() {
 
   function handleKeyDown(e) {
     if (e.key === 'Enter') {
+      e.preventDefault();
       handleSubmit(onSubmit)(); 
     }
   }
@@ -84,7 +85,7 @@ function Login() {
           </button>
 
           <div className="mt-4 text-center">
-            <a href="/recuperar-senha" className="text-sm text-gray-500 hover:text-gray-700">
+            <a href="/RecuperarSenha" className="text-sm text-gray-500 hover:text-gray-700">
               Esqueceu a senha?
             </a><br />
             <a href="/cadastro" className="text-sm text-gray-500 hover:text-gray-700">
