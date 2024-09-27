@@ -27,6 +27,8 @@ function Cadastro() {
   const toggleShowPassword = () => setShowPassword(!showPassword);
   const toggleShowPasswordConfirmation = () => setShowPasswordConfirmation(!showPasswordConfirmation);
 
+  const passwordValidation = /^(?=.*[A-Z])(?=.*\d).{7,}$/;
+
   return (
     <div className="flex flex-col p-0 m-0">
       <main className="flex-grow flex items-center justify-center bg-[#E5E5E5] p-4 w-96">
@@ -75,7 +77,11 @@ function Cadastro() {
                 type={showPassword ? "text" : "password"}
                 id="password"
                 className={`${errors?.password ? "border-red-500" : "border-gray-400"} border rounded w-full py-2 px-3 text-gray-700`}
-                {...register("password", { required: true, minLength: 7 })}
+                {...register("password", { 
+                  required: true, 
+                  minLength: 7, 
+                  validate: value => passwordValidation.test(value) || "A senha deve iniciar com letra maiúscula e conter números "
+                })}
               />
               <img
                 src={showPassword ? eyeOff : eyeOn}
@@ -86,6 +92,7 @@ function Cadastro() {
             </div>
             {errors?.password?.type === 'required' && <p className="text-red-500 text-xs">Preencha sua senha</p>}
             {errors?.password?.type === 'minLength' && <p className="text-red-500 text-xs">A senha precisa ter no mínimo 7 caracteres</p>}
+            {errors?.password?.type === 'validate' && <p className="text-red-500 text-xs">{errors.password.message}</p>}
           </div>
 
           <div className="mb-4">
