@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 function Header() {
     const navigate = useNavigate();
 
-    const handleCadastro = () => {
+    const handleLogin = () => {
         navigate("/");
     };
 
@@ -15,9 +15,9 @@ function Header() {
                 className="w-24 h-24 ml-4 sm:ml-8 lg:ml-16 cursor-pointer"
                 src={logo}
                 alt="Logo"
-                onClick={handleCadastro}
+                onClick={handleLogin}
             />
-            <div className="text-white mr-4 sm:mr-8 lg:mr-16 font-bold">
+            <div className="text-white mr-4 sm:mr-8 lg:mr-16 font-bold cursor-pointer" onClick={handleLogin}>
                 Área do Assinante
             </div>
         </header>

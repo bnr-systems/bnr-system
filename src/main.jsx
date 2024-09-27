@@ -6,6 +6,8 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import App from './App';
 import Cadastro  from './pages/Cadastro/cadastro'
 import Confirmacao from './pages/Cadastro/Confirmacao';
+import Login from './pages/Login/Login';
+import RecuperarSenha from './pages/Login/RecuperarSenha';
 
 const router = createBrowserRouter([
   {
@@ -14,7 +16,15 @@ const router = createBrowserRouter([
     children: [
       {
         path: '/',
+        element: <Login />,
+      },
+      {
+        path: '/Cadastro',
         element: <Cadastro />,
+      },
+      {
+        path: '/RecuperarSenha',
+        element: <RecuperarSenha />,
       },
       {
         path: '/Confirmacao',
