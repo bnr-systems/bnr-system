@@ -11,7 +11,6 @@ function Login() {
     register,
     handleSubmit,
     formState: { errors },
-    watch,
   } = useForm();
   const [showPassword, setShowPassword] = useState(false);
 
@@ -29,8 +28,8 @@ function Login() {
   const toggleShowPassword = () => setShowPassword(!showPassword);
 
   return (
-    <div className="flex flex-col p-0 m-0">
-      <main className="flex-grow flex items-center justify-center bg-[#E5E5E5] p-4 w-96">
+    <div className="flex flex-col h-full items-center justify-center bg-[#E5E5E5] p-4 w-full">
+      <main className="flex flex-col items-center justify-center bg-[#E5E5E5] p-4 w-full over">
         <form
           className="bg-white rounded-lg shadow-xl p-8 w-full max-w-md sm:max-w-lg lg:max-w-lg"
           onSubmit={handleSubmit(onSubmit)}
@@ -38,7 +37,7 @@ function Login() {
           noValidate
         >
           <h2 className="text-2xl font-bold text-gray-700 mb-6 text-center">
-            Login
+            Login 
           </h2>
 
           <div className="mb-4">
@@ -98,9 +97,7 @@ function Login() {
               <p className="text-red-500 text-xs">Preencha sua senha</p>
             )}
             {errors?.password?.type === "minLength" && (
-              <p className="text-red-500 text-xs">
-                Senha inválida
-              </p>
+              <p className="text-red-500 text-xs">Senha inválida</p>
             )}
             {errors?.password?.type === "validate" && (
               <p className="text-red-500 text-xs">Senha inválida</p>
@@ -109,7 +106,7 @@ function Login() {
 
           <button
             type="submit"
-            className="bg-[#FCA311] text-white font-bold py-2 px-4 rounded w-full hover:bg-[#fcb645]"
+            className="bg-[#FCA311] text-white font-bold py-2 px-4 rounded w-full hover:bg-[#fcb645] transition-all duration-300"
           >
             Entrar
           </button>
@@ -126,7 +123,7 @@ function Login() {
               href="/cadastro"
               className="text-sm text-gray-500 hover:text-gray-700"
             >
-              Não possui uma senha? Cadastre-se agora
+              Não possui uma conta? Cadastre-se agora
             </a>
           </div>
         </form>

@@ -29,8 +29,8 @@ function RecuperarSenha() {
   }
 
   return (
-    <div className="flex flex-col p-0 m-0">
-      <main className="flex-grow flex items-center justify-center bg-[#E5E5E5] p-4 w-96">
+    <div className="flex flex-col h-full items-center justify-center bg-[#E5E5E5] p-4 w-full">
+      <main className="flex-grow flex items-center justify-center bg-[#E5E5E5] p-4 w-96 ">
         <form
           className="bg-white rounded-lg shadow-xl p-8 w-full max-w-md sm:max-w-lg lg:max-w-lg"
           onSubmit={handleSubmit(onSubmit)}
@@ -66,7 +66,7 @@ function RecuperarSenha() {
 
           <div className="mt-4 text-center">
             <a href="/" className="text-sm text-gray-500 hover:text-gray-700">
-              Voltar para a tela de login
+              Voltar
             </a>
           </div>
           {emailEnviado && (

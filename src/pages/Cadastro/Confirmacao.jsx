@@ -15,7 +15,7 @@ function Confirmacao() {
   
 
     return (
-        <div className="flex flex-col">
+        <div className="flex flex-col h-full items-center justify-center bg-[#E5E5E5] p-4 w-full">
             <main className="flex-grow flex items-center justify-center bg-[#E5E5E5] p-4">
                 <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md sm:max-w-lg lg:max-w-xl text-center">
                     <h2 className="text-2xl font-bold mb-6">E-mail enviado!</h2>

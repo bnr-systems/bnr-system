@@ -30,14 +30,18 @@ function Cadastro() {
   const passwordValidation = /^(?=.*[A-Z])(?=.*\d).{7,}$/;
 
   return (
-    <div className="flex flex-col p-0 m-0">
-      <main className="flex-grow flex items-center justify-center bg-[#E5E5E5] p-4 w-96">
+    <div className="flex flex-col h-full items-center justify-center p-4 w-full">
+      <main className="flex-grow flex items-center justify-center bg-[#E5E5E5] p-4 w-96 ">
+
         <form
           className="bg-white rounded-lg shadow-xl p-8 w-full max-w-md sm:max-w-lg lg:max-w-lg"
           onSubmit={handleSubmit(onSubmit)}
           onKeyDown={handleKeyDown}
           noValidate
         >
+          <h2 className="text-2xl font-bold text-gray-700 mb-6 text-center">
+            Cadastro
+          </h2>
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="nome">
               Nome
@@ -144,7 +148,7 @@ function Cadastro() {
           </button>
           <div className="mt-4 text-center">
             <a href="/" className="text-sm text-gray-500 hover:text-gray-700">
-              Voltar para a tela de login
+              Voltar 
             </a>
           </div>
         </form>
