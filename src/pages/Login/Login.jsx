@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import validator from "validator";
+import axios from "axios";
 import eyeOn from "/src/assets/images/eye.svg";
 import eyeOff from "/src/assets/images/eye-off.svg";
 
@@ -13,9 +14,35 @@ function Login() {
     formState: { errors },
   } = useForm();
   const [showPassword, setShowPassword] = useState(false);
+  const [apiError, setApiError] = useState(""); // Novo estado para armazenar o erro da API
+
+  const loginUser = async (data) => {
+    try {
+      const response = await axios.post("http://vps55372.publiccloud.com.br/api/login", {
+        email: data.email,
+        password: data.password,
+      });
+
+      alert("Cadastro feito com sucesso")
+      navigate("/", { state: { email: data.email } });
+
+    } catch (error) {
+      if (error.response) {
+        if (error.response.status === 403) {
+          const errorMessage = error.response.data.message; // Obtém a mensagem de erro do servidor
+          setApiError("Usuário não confirmado. Por favor, verifique seu e-mail."); // Define o erro da API para exibir na interface
+        } else {
+          setApiError("Erro desconhecido ao fazer login. Por favor, tente novamente mais tarde.");
+        }
+      } else {
+        console.error("Erro ao fazer login:", error);
+        setApiError("Erro ao se comunicar com o servidor.");
+      }
+    }
+  };
 
   function onSubmit(data) {
-    navigate("/", { state: { email: data.email } });
+    loginUser(data);
   }
 
   function handleKeyDown(e) {
@@ -50,12 +77,15 @@ function Login() {
             <input
               type="email"
               id="email"
-              className={`${errors?.email ? "border-red-500" : "border-gray-400"
-                } border rounded w-full py-2 px-3 text-gray-700`}
+              className={`${errors?.email ? "border-red-500" : "border-gray-400"} border rounded w-full py-2 px-3 text-gray-700`}
               {...register("email", {
                 required: true,
                 validate: (value) => validator.isEmail(value),
               })}
+              onChange={(e) => {
+                register("email").onChange(e); // Mantém as validações do React Hook Form
+                setApiError(""); // Limpa o erro da API ao alterar o campo
+              }}
             />
             {errors?.email?.type === "required" && (
               <p className="text-red-500 text-xs">Preencha seu e-mail</p>
@@ -76,8 +106,7 @@ function Login() {
               <input
                 type={showPassword ? "text" : "password"}
                 id="password"
-                className={`${errors?.password ? "border-red-500" : "border-gray-400"
-                  } border rounded w-full py-2 px-3 text-gray-700`}
+                className={`${errors?.password ? "border-red-500" : "border-gray-400"} border rounded w-full py-2 px-3 text-gray-700`}
                 {...register("password", {
                   required: true,
                   minLength: 7,
@@ -85,6 +114,10 @@ function Login() {
                     /^[A-Z].*(?=.*\d)/.test(value) ||
                     "A senha deve começar com letra maiúscula e conter pelo menos um número.",
                 })}
+                onChange={(e) => {
+                  register("password").onChange(e); // Mantém as validações do React Hook Form
+                  setApiError(""); // Limpa o erro da API ao alterar o campo
+                }}
               />
               <img
                 src={showPassword ? eyeOff : eyeOn}
@@ -103,6 +136,10 @@ function Login() {
               <p className="text-red-500 text-xs">Senha inválida</p>
             )}
           </div>
+
+          {apiError && (
+            <p className="text-red-500 text-xs text-center mb-4">{apiError}</p>
+          )}
 
           <button
             type="submit"

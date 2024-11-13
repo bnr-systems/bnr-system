@@ -11,8 +11,7 @@ function Confirmacao() {
     const location = useLocation();
     const email = location.state?.email || "";
   
-    const maskedEmail = email.replace(/(?<=.{4}).(?=.*@)/g, "*");
-  
+    const maskedEmail = email.replace(/(?<=.{4})(.*)(?=@)/g, (match) => '*'.repeat(match.length));
 
     return (
         <div className="flex flex-col h-full items-center justify-center bg-[#E5E5E5] p-4 w-full">

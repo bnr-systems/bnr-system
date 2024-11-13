@@ -30,10 +30,10 @@ function RecuperarSenha() {
 
   return (
     <div className="flex flex-col h-full items-center justify-center bg-[#E5E5E5] p-4 w-full">
-      <main className="flex-grow flex items-center justify-center bg-[#E5E5E5] p-4 w-96 ">
-        <form
-          className="bg-white rounded-lg shadow-xl p-8 w-full max-w-md sm:max-w-lg lg:max-w-lg"
-          onSubmit={handleSubmit(onSubmit)}
+    <main className="flex flex-col items-center justify-center bg-[#E5E5E5] p-4 w-full">
+      <form
+        className="bg-white rounded-lg shadow-xl p-8 w-full max-w-md sm:max-w-lg lg:max-w-lg"
+        onSubmit={handleSubmit(onSubmit)}
           onKeyDown={handleKeyDown}
         >
           <h2 className="text-2xl font-bold text-gray-700 mb-6 text-center">
