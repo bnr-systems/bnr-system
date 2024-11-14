@@ -4,10 +4,11 @@ import { createRoot } from 'react-dom/client'
 import './index.css';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import App from './App';
-import Cadastro  from './pages/Cadastro/cadastro'
+import Cadastro  from './pages/Cadastro/Cadastro'
 import Confirmacao from './pages/Cadastro/Confirmacao';
 import Login from './pages/Login/Login';
 import RecuperarSenha from './pages/Login/RecuperarSenha';
+import ValidacaoEmail from './pages/Login/ValidacaoEmail';
 
 const router = createBrowserRouter([
   {
@@ -25,6 +26,10 @@ const router = createBrowserRouter([
       {
         path: '/RecuperarSenha',
         element: <RecuperarSenha />,
+      },
+      {
+        path: '/ValidacaoEmail',
+        element: <ValidacaoEmail />,
       },
       {
         path: '/Confirmacao',

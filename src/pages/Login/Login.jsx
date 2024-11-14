@@ -18,25 +18,25 @@ function Login() {
 
   const loginUser = async (data) => {
     try {
-      const response = await axios.post("http://vps55372.publiccloud.com.br/api/login", {
+      const response = await axios.post("https://vps55372.publiccloud.com.br/api/login", {
         email: data.email,
         password: data.password,
       });
 
-      alert("Cadastro feito com sucesso")
+      alert("Login feito com sucesso")
       navigate("/", { state: { email: data.email } });
 
     } catch (error) {
       if (error.response) {
         if (error.response.status === 403) {
-          const errorMessage = error.response.data.message; // Obtém a mensagem de erro do servidor
-          setApiError("Usuário não confirmado. Por favor, verifique seu e-mail."); // Define o erro da API para exibir na interface
+          const errorMessage = error.response.data.message; 
+          setApiError("Usuário não confirmado. Por favor, verifique seu e-mail.");
         } else {
-          setApiError("Erro desconhecido ao fazer login. Por favor, tente novamente mais tarde.");
+          setApiError("E-mail ou senha incorretos");
         }
       } else {
         console.error("Erro ao fazer login:", error);
-        setApiError("Erro ao se comunicar com o servidor.");
+        setApiError("Usuário não registrado. Tente novamente");
       }
     }
   };

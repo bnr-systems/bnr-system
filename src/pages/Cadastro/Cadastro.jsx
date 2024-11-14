@@ -3,46 +3,50 @@ import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import validator from "validator";
 import axios from "axios";
+import { FaSpinner } from 'react-icons/fa';
 import eyeOn from "/src/assets/images/eye.svg";
 import eyeOff from "/src/assets/images/eye-off.svg";
 
 function Cadastro() {
   const navigate = useNavigate();
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    watch,
-  } = useForm();
+  const { register, handleSubmit, formState: { errors }, watch} = useForm();
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordConfirmation, setShowPasswordConfirmation] = useState(false);
+  const [isLoading, setIsLoading] = useState(false); 
   const [apiError, setApiError] = useState("");
   const password = watch("password");
 
   const registerUser = async (data) => {
+    setIsLoading(true);
     try {
-      const response = await axios.post("http://vps55372.publiccloud.com.br/api/register", {
-        name: data.name,
-        email: data.email,
-        password: data.password,
-        password_confirmation: data.passwordConfirmation,
-        userType: data.userType,
-      }); 
+      const response = await axios.post(
+        "https://vps55372.publiccloud.com.br/api/register",
+        {
+          name: data.name,
+          email: data.email,
+          password: data.password,
+          password_confirmation: data.passwordConfirmation,
+          userType: data.userType,
+        }
+      );
 
-      navigate("/Confirmacao", { state: { email: data.email } });
-
+      if (response.status === 200) {
+        navigate("/Confirmacao", { state: { email: data.email } });
+      }
     } catch (error) {
       if (error.response && error.response.data.errors?.email) {
         setApiError("E-mail já registrado.");
       } else {
-        setApiError("Erro ao cadastrar. Tente novamente.");
+        setApiError("Erro na comunicação com o servidor.");
       }
       console.error("Erro ao cadastrar:", error.response.data);
+    } finally {
+      setIsLoading(false); 
     }
   };
 
   function onSubmit(data) {
-    registerUser(data); 
+    registerUser(data);
   }
 
   function handleKeyDown(e) {
@@ -232,8 +236,16 @@ function Cadastro() {
           <button
             type="submit"
             className="bg-[#FCA311] text-white font-bold py-2 px-4 rounded w-full hover:bg-[#fcb645]"
+            disabled={isLoading} 
           >
-            Cadastrar
+            {isLoading ? (
+              <div className="flex justify-center items-center">
+                <FaSpinner className="animate-spin mr-2" /> 
+                Cadastrando...
+              </div>
+            ) : (
+              "Cadastrar"
+            )}
           </button>
           <div className="mt-4 text-center">
             <a href="/" className="text-sm text-gray-500 hover:text-gray-700">
