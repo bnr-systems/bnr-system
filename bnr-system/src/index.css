@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
-.title{
-    @apply text-red-500 font-extrabold;
-}
+.header {
+    height: 120px; 
+  }
+  
+  .footer {
+    height: 60px; 
+  }
+  
