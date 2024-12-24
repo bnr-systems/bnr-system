@@ -65,7 +65,7 @@ function RecuperarSenha() {
           </button>
 
           <div className="mt-4 text-center">
-            <a href="/" className="text-sm text-gray-500 hover:text-gray-700">
+            <a href="/Login" className="text-sm text-gray-500 hover:text-gray-700">
               Voltar
             </a>
           </div>

@@ -9,6 +9,10 @@ import Confirmacao from './pages/Cadastro/Confirmacao';
 import Login from './pages/Login/Login';
 import RecuperarSenha from './pages/Login/RecuperarSenha';
 import ValidacaoEmail from './pages/Login/ValidacaoEmail';
+import Unidades from './pages/Main/Unidades'
+import CadastroUnidades from './pages/Main/CadastroUnidades'
+import EdicaoUnidade from './pages/Main/EdicaoUnidade';
+import Pecas from './pages/Main/Pecas'
 
 const router = createBrowserRouter([
   {
@@ -17,7 +21,15 @@ const router = createBrowserRouter([
     children: [
       {
         path: '/',
-        element: <Login />,
+        element: <Login />
+      },
+      {
+        path: '/cadastroUnidades',
+        element: <CadastroUnidades />
+      },
+      {
+        path: '/Pecas',
+        element: <Pecas />
       },
       {
         path: '/Cadastro',
@@ -34,6 +46,18 @@ const router = createBrowserRouter([
       {
         path: '/Confirmacao',
         element: <Confirmacao />
+      },
+      {
+        path: '/Unidades',
+        element: <Unidades />,
+      },
+      {
+        path: '/edicaoUnidade',
+        element: <EdicaoUnidade />,
+      },
+      {
+        path: '/Login',
+        element: <Login />,
       }
     ],
   },

@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import validator from "validator";
-import axios from "axios";
+import api from "/src/api/api";
 import { FaSpinner } from 'react-icons/fa';
 import eyeOn from "/src/assets/images/eye.svg";
 import eyeOff from "/src/assets/images/eye-off.svg";
@@ -20,7 +20,7 @@ function Cadastro() {
   const registerUser = async (data) => {
     setIsLoading(true);
     try {
-      const response = await axios.post(
+      const response = await api.post(
         "https://vps55372.publiccloud.com.br/api/register",
         {
           name: data.name,
@@ -125,7 +125,7 @@ function Cadastro() {
               <p className="text-red-500 text-xs">E-mail inválido</p>
             )}
             {apiError && <p className="text-red-500 text-xs">{apiError}</p>}
-          </div>
+            </div>
 
           <div className="mb-4">
             <label
@@ -249,7 +249,7 @@ function Cadastro() {
             )}
           </button>
           <div className="mt-4 text-center">
-            <a href="/" className="text-sm text-gray-500 hover:text-gray-700">
+            <a href="/Login" className="text-sm text-gray-500 hover:text-gray-700">
               Voltar
             </a>
           </div>

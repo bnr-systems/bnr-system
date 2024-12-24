@@ -5,7 +5,7 @@ function Confirmacao() {
     const navigate = useNavigate();
 
     const handleCadastro = () => {
-        navigate("/");
+        navigate("/Login");
     };
 
     const location = useLocation();

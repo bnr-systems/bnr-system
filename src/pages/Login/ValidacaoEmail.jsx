@@ -5,7 +5,7 @@ function ValidacaoEmail() {
   const navigate = useNavigate();
 
   const handleGoToLogin = () => {
-    navigate("/");
+    navigate("/Login");
   };
 
   return (
