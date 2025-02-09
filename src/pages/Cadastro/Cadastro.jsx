@@ -1,19 +1,24 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import validator from "validator";
 import api from "/src/api/api";
-import { FaSpinner } from 'react-icons/fa';
+import { FaSpinner } from "react-icons/fa";
 import eyeOn from "/src/assets/images/eye.svg";
 import eyeOff from "/src/assets/images/eye-off.svg";
 
 function Cadastro() {
   const navigate = useNavigate();
-  const { register, handleSubmit, formState: { errors }, watch} = useForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    watch,
+  } = useForm();
   const [showPassword, setShowPassword] = useState(false);
-  const [showPasswordConfirmation, setShowPasswordConfirmation] = useState(false);
-  const [isLoading, setIsLoading] = useState(false); 
+  const [showPasswordConfirmation, setShowPasswordConfirmation] =
+    useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [apiError, setApiError] = useState("");
   const password = watch("password");
 
@@ -42,7 +47,7 @@ function Cadastro() {
       }
       console.error("Erro ao cadastrar:", error.response.data);
     } finally {
-      setIsLoading(false); 
+      setIsLoading(false);
     }
   };
 
@@ -125,7 +130,7 @@ function Cadastro() {
               <p className="text-red-500 text-xs">E-mail inválido</p>
             )}
             {apiError && <p className="text-red-500 text-xs">{apiError}</p>}
-            </div>
+          </div>
 
           <div className="mb-4">
             <label
@@ -145,10 +150,13 @@ function Cadastro() {
                   required: true,
                   minLength: 8,
                   validate: (value) =>
-                    passwordValidation.test(value) ||
-                    "A senha deve iniciar com letra maiúscula, conter números e pelo menos um caractere especial",
+                    /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).*$/.test(
+                      value
+                    ) ||
+                    "A senha deve conter ao menos uma letra maiúscula, um número e um caractere especial.",
                 })}
               />
+
               <img
                 src={showPassword ? eyeOff : eyeOn}
                 alt="eye-icon"
@@ -237,11 +245,11 @@ function Cadastro() {
           <button
             type="submit"
             className="bg-[#FCA311] text-white font-bold py-2 px-4 rounded w-full hover:bg-[#fcb645]"
-            disabled={isLoading} 
+            disabled={isLoading}
           >
             {isLoading ? (
               <div className="flex justify-center items-center">
-                <FaSpinner className="animate-spin mr-2" /> 
+                <FaSpinner className="animate-spin mr-2" />
                 Cadastrando...
               </div>
             ) : (
@@ -249,7 +257,10 @@ function Cadastro() {
             )}
           </button>
           <div className="mt-4 text-center">
-            <a href="/Login" className="text-sm text-gray-500 hover:text-gray-700">
+            <a
+              href="/Login"
+              className="text-sm text-gray-500 hover:text-gray-700"
+            >
               Voltar
             </a>
           </div>

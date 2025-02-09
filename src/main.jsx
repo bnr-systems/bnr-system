@@ -8,11 +8,12 @@ import Cadastro  from './pages/Cadastro/Cadastro'
 import Confirmacao from './pages/Cadastro/Confirmacao';
 import Login from './pages/Login/Login';
 import RecuperarSenha from './pages/Login/RecuperarSenha';
-import ValidacaoEmail from './pages/Login/ValidacaoEmail';
+import RedefinirSenha from './pages/Login/RedefinirSenha';
 import Unidades from './pages/Main/Unidades'
 import CadastroUnidades from './pages/Main/CadastroUnidades'
 import EdicaoUnidade from './pages/Main/EdicaoUnidade';
 import Pecas from './pages/Main/Pecas'
+import CadastroPecas from './pages/Main/CadastroPecas';
 
 const router = createBrowserRouter([
   {
@@ -32,6 +33,10 @@ const router = createBrowserRouter([
         element: <Pecas />
       },
       {
+        path: '/cadastroPecas',
+        element: <CadastroPecas />
+      },
+      {
         path: '/Cadastro',
         element: <Cadastro />,
       },
@@ -40,8 +45,8 @@ const router = createBrowserRouter([
         element: <RecuperarSenha />,
       },
       {
-        path: '/ValidacaoEmail',
-        element: <ValidacaoEmail />,
+        path: '/RedefinirSenha',
+        element: <RedefinirSenha />,
       },
       {
         path: '/Confirmacao',

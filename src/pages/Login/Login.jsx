@@ -38,12 +38,13 @@ function Login() {
       localStorage.setItem("id", id);
       localStorage.setItem("token", token);
 
-
       navigate("/Unidades", { state: { email: data.email } });
     } catch (error) {
       if (error.response) {
         if (error.response.status === 403) {
-          setApiError("Usuário não confirmado. Por favor, verifique seu e-mail.");
+          setApiError(
+            "Usuário não confirmado. Por favor, verifique seu e-mail."
+          );
         } else {
           setApiError("E-mail ou senha incorretos");
         }
@@ -130,14 +131,15 @@ function Login() {
                   required: true,
                   minLength: 7,
                   validate: (value) =>
-                    /^[A-Z].*(?=.*\d)/.test(value) ||
-                    "A senha deve começar com letra maiúscula e conter pelo menos um número.",
+                    /^(?=.*[A-Z])(?=.*\d).*$/.test(value) ||
+                    "A senha deve conter ao menos uma letra maiúscula e um número.",
                 })}
                 onChange={(e) => {
                   register("password").onChange(e);
                   setApiError("");
                 }}
               />
+
               <img
                 src={showPassword ? eyeOff : eyeOn}
                 alt="eye-icon"
@@ -146,13 +148,13 @@ function Login() {
               />
             </div>
             {errors?.password?.type === "required" && (
-              <p className="text-red-500 text-xs">Preencha sua senha</p>
+              <p className="text-red-500 text-xs mt-2">Preencha sua senha</p>
             )}
             {errors?.password?.type === "minLength" && (
-              <p className="text-red-500 text-xs">Senha muito curta</p>
+              <p className="text-red-500 text-xs mt-2">Senha muito curta</p>
             )}
             {errors?.password?.type === "validate" && (
-              <p className="text-red-500 text-xs">{errors.password.message}</p>
+              <p className="text-red-500 text-xs mt-2">{errors.password.message}</p>
             )}
           </div>
 
