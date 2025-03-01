@@ -14,6 +14,8 @@ import CadastroUnidades from './pages/Main/CadastroUnidades'
 import EdicaoUnidade from './pages/Main/EdicaoUnidade';
 import Pecas from './pages/Main/Pecas'
 import CadastroPecas from './pages/Main/CadastroPecas';
+import VincularPecas from './pages/Main/VincularPecas';
+import PecasVinculadas from './pages/Main/PecasVinculadas';
 
 const router = createBrowserRouter([
   {
@@ -27,6 +29,14 @@ const router = createBrowserRouter([
       {
         path: '/cadastroUnidades',
         element: <CadastroUnidades />
+      },
+      {
+        path: '/vincularPecas',
+        element: <VincularPecas />
+      },
+      {
+        path: '/pecasVinculadas',
+        element: <PecasVinculadas />
       },
       {
         path: '/Pecas',

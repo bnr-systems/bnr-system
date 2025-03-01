@@ -266,6 +266,12 @@ const onSubmit = async (data) => {
         >
           Peças
         </button>
+        <button
+          className="p-4 hover:bg-gray-700 text-left w-full"
+          onClick={() => navigate("/pecasVinculadas")}
+        >
+          Peças Vinculadas
+        </button>
       </aside>
       <h1 className="text-xl font-bold mb-6 text-center">Editar Unidade</h1>
       {loading && <p>Carregando...</p>}

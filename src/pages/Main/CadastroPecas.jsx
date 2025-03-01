@@ -117,9 +117,6 @@ function CadastroPecas() {
     formData.append("fabricante_id", data.fabricante_id);
     formData.append("produto_id", data.id_produto); // Ajustado para 'produto_id'
     formData.append("foto", data.foto[0]);
-
-    console.log(formData);
-
     try {
       await api.post(
         "https://vps55372.publiccloud.com.br/api/pecas",
@@ -209,6 +206,12 @@ function CadastroPecas() {
           onClick={() => navigate("/pecas")}
         >
           Peças
+        </button>
+        <button
+          className="p-4 hover:bg-gray-700 text-left w-full"
+          onClick={() => navigate("/pecasVinculadas")}
+        >
+          Peças Vinculadas
         </button>
       </aside>
       <h1 className="text-2xl font-bold mb-6 text-center">Cadastro de Peças</h1>

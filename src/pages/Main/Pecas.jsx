@@ -142,7 +142,6 @@ const Pecas = () => {
     const fim = inicio + itensPorPagina;
     return pecasFiltradas.slice(inicio, fim);
   }, [pecasFiltradas, paginaAtual, itensPorPagina]);
-  console.log(pecasPaginadas);
   const totalPaginas = Math.ceil(pecasFiltradas.length / itensPorPagina);
 
   const toggleDetalhes = (id) => {
@@ -215,6 +214,12 @@ const Pecas = () => {
           onClick={() => navigate("/pecas")}
         >
           Peças
+        </button>
+        <button
+          className="p-4 hover:bg-gray-700 text-left w-full"
+          onClick={() => navigate("/pecasVinculadas")}
+        >
+          Peças Vinculadas
         </button>
       </aside>
 
@@ -345,7 +350,7 @@ const Pecas = () => {
                       <img
                         src={`https://vps55372.publiccloud.com.br/storage/${peca.foto}`}
                         alt={peca.nome_fantasia}
-                        className="max-w-[600px] max-h-[600px] h-auto w-auto mx-auto"
+                        className="md:max-w-[600px] md:max-h-[600px] h-auto w-auto mx-auto sm:max-w-[400px] sm:max-h-[400px]" 
                       />
                     </td>
                   </tr>

@@ -237,6 +237,12 @@ function CadastroUnidades() {
         >
           Peças
         </button>
+        <button
+          className="p-4 hover:bg-gray-700 text-left w-full"
+          onClick={() => navigate("/pecasVinculadas")}
+        >
+          Peças Vinculadas
+        </button>
       </aside>
 
       <div className="flex-1 p-8 bg-gray-100 overflow-y-auto rounded-md shadow-xl">
