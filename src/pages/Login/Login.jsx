@@ -25,50 +25,67 @@ function Login() {
         email: data.email,
         password: data.password,
       });
+    // Armazenar ID e Token no localStorage
+    const { id, token, user } = response.data;
 
-      // Armazenar ID e Token no localStorage
-      const { id, token } = response.data;
+    // Verificar se há um usuário diferente logado
+    const existingUserId = localStorage.getItem("id");
+    if (existingUserId && existingUserId !== id.toString()) {
+      localStorage.clear(); // Limpa o localStorage ao trocar de conta
+    }
 
-      // Verificar se há um usuário diferente logado
-      const existingUserId = localStorage.getItem("id");
-      if (existingUserId && existingUserId !== id.toString()) {
-        localStorage.clear(); // Limpa o localStorage ao trocar de conta
+    localStorage.setItem("id", id);
+    localStorage.setItem("token", token);
+    
+    // Also save the user object for the Header component
+    if (user) {
+      localStorage.setItem("user", JSON.stringify(user));
+    } else {
+      // If user object isn't included in the response, we need to fetch it
+      try {
+        const profileResponse = await api.get("/profile", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        localStorage.setItem("user", JSON.stringify(profileResponse.data.data));
+      } catch (error) {
+        console.error("Error fetching user profile:", error);
       }
+    }
+    
+    // Notify other components (like Header) about user login
+    window.dispatchEvent(new Event("userUpdated"));
 
-      localStorage.setItem("id", id);
-      localStorage.setItem("token", token);
-
-      navigate("/Unidades", { state: { email: data.email } });
-    } catch (error) {
-      if (error.response) {
-        if (error.response.status === 403) {
-          setApiError(
-            "Usuário não confirmado. Por favor, verifique seu e-mail."
-          );
-        } else {
-          setApiError("E-mail ou senha incorretos");
-        }
+    navigate("/Unidades", { state: { email: data.email } });
+  } catch (error) {
+    if (error.response) {
+      if (error.response.status === 403) {
+        setApiError(
+          "Usuário não confirmado. Por favor, verifique seu e-mail."
+        );
       } else {
-        setApiError("Usuário não registrado. Tente novamente");
+        setApiError("E-mail ou senha incorretos");
       }
-    } finally {
-      setLoading(false);
+    } else {
+      setApiError("Usuário não registrado. Tente novamente");
     }
-  };
+  } finally {
+    setLoading(false);
+  }
+};
 
-  const onSubmit = (data) => {
-    setApiError(""); // Limpar erros anteriores
-    loginUser(data);
-  };
+const onSubmit = (data) => {
+  setApiError(""); // Limpar erros anteriores
+  loginUser(data);
+};
 
-  const handleKeyDown = (e) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      handleSubmit(onSubmit)();
-    }
-  };
+const handleKeyDown = (e) => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    handleSubmit(onSubmit)();
+  }
+};
 
-  const toggleShowPassword = () => setShowPassword(!showPassword);
+const toggleShowPassword = () => setShowPassword(!showPassword);
 
   return (
     <div className="flex flex-col h-full items-center justify-center bg-[#E5E5E5] p-4 w-full">

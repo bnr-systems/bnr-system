@@ -43,6 +43,7 @@ const PecasVinculadas = () => {
         setVinculos(vinculosFiltrados);
       } catch (error) {
         console.error("Erro ao buscar dados:", error);
+        
       } finally {
         setIsLoading(false);
       }
@@ -116,7 +117,7 @@ const PecasVinculadas = () => {
   );
 
   return (
-    <div className="h-screen w-full flex flex-col p-6 mx-auto">
+    <div className="h-screen sm:w-full w-screen flex flex-col p-6 mx-auto">
       <h1 className="text-2xl font-bold mb-6 text-center">Peças Vinculadas</h1>
       <div className="hidden md:flex justify-end mb-4">
         <button
@@ -269,6 +270,13 @@ const PecasVinculadas = () => {
           </tbody>
         </table>
       </div>
+      
+      <button
+        onClick={() => navigate("/vincularPecas")}
+        className="bg-[#FCA311] mt-8 text-white font-bold py-2 px-4 rounded w-full sm:w-48 hover:bg-[#fcb645] transition-all duration-300 flex items-center justify-center md:hidden"
+      >
+        + Vincular Novas Peças
+      </button>
       {/* Paginação */}
       <div className="flex justify-center items-center mt-8 space-x-2">
         <button
@@ -291,12 +299,6 @@ const PecasVinculadas = () => {
           Próxima
         </button>
       </div>
-      <button
-        onClick={() => navigate("/vincularPecas")}
-        className="bg-[#FCA311] mt-8 text-white font-bold py-2 px-4 rounded w-full sm:w-48 hover:bg-[#fcb645] transition-all duration-300 flex items-center justify-center md:hidden"
-      >
-        + Vincular Novas Peças
-      </button>
     </div>
   );
 };

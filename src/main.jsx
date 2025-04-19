@@ -16,6 +16,7 @@ import Pecas from './pages/Main/Pecas'
 import CadastroPecas from './pages/Main/CadastroPecas';
 import VincularPecas from './pages/Main/VincularPecas';
 import PecasVinculadas from './pages/Main/PecasVinculadas';
+import Perfil from './pages/Perfil/Perfil';
 
 const router = createBrowserRouter([
   {
@@ -73,6 +74,10 @@ const router = createBrowserRouter([
       {
         path: '/Login',
         element: <Login />,
+      },
+      {
+        path: '/Perfil',
+        element: <Perfil />,
       }
     ],
   },

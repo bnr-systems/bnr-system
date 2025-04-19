@@ -119,19 +119,17 @@ const VincularPecas = () => {
       navigate("/pecasVinculadas");
     } catch (error) {
       if (error.response) {
-        if (error.response.status === 422) {
-          setError("general", {
+        const errorMessage = error.response.data.message || "Erro desconhecido.";
+        
+        if (errorMessage.includes("Numeric value out of range")) {
+          setError("estoque", {
             type: "manual",
-            message:
-              error.response.data.message ||
-              "Já existe um vínculo com essa unidade e peça.",
+            message: "O valor inserido no estoque é muito alto.",
           });
         } else {
           setError("general", {
             type: "manual",
-            message: `Erro ao criar vínculo: ${
-              error.response.data.message || "Erro desconhecido."
-            }`,
+            message: `Erro ao criar vínculo: ${errorMessage}`,
           });
         }
       } else {
@@ -141,6 +139,9 @@ const VincularPecas = () => {
           message: "Erro de conexão. Tente novamente mais tarde.",
         });
       }
+      
+      setUnidadeSelecionada(null);
+      setPecaSelecionada(null);
     }
   };
   const pecasFiltradas = pecas

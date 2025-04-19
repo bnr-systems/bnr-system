@@ -43,7 +43,7 @@ function Cadastro() {
       if (error.response && error.response.data.errors?.email) {
         setApiError("E-mail já registrado.");
       } else {
-        setApiError("Erro na comunicação com o servidor.");
+        setApiError("E-mail inválido.");
       }
       console.error("Erro ao cadastrar:", error.response.data);
     } finally {
