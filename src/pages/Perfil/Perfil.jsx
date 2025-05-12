@@ -27,7 +27,6 @@ function Perfil() {
         fetchUserProfile();
     }, []);
 
-    console.log("user: ", user);
 
     return (
         <div className="container mx-auto p-4">

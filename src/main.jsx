@@ -17,6 +17,9 @@ import CadastroPecas from './pages/Main/CadastroPecas';
 import VincularPecas from './pages/Main/VincularPecas';
 import PecasVinculadas from './pages/Main/PecasVinculadas';
 import Perfil from './pages/Perfil/Perfil';
+import CarrinhoPage from './pages/Main/CarrinhoPage';
+import { CarrinhoProvider } from './context/CarrinhoContext';
+import PecasPromocao from './pages/Main/PecasPromocao';
 
 const router = createBrowserRouter([
   {
@@ -42,6 +45,14 @@ const router = createBrowserRouter([
       {
         path: '/Pecas',
         element: <Pecas />
+      },
+      {
+        path: '/PecasPromocao',
+        element: <PecasPromocao />
+      },
+      {
+        path: '/CarrinhoPage',
+        element: <CarrinhoPage />
       },
       {
         path: '/cadastroPecas',
@@ -84,6 +95,8 @@ const router = createBrowserRouter([
 ]);
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <CarrinhoProvider>
+      <RouterProvider router={router} />
+    </CarrinhoProvider>
   </StrictMode>,
 )

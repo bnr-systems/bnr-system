@@ -58,6 +58,8 @@ function Unidades() {
   useEffect(() => {
     fetchUnidades();
   }, []);
+  const totalPages = Math.ceil(filteredUnidades.length / itemsPerPage);
+
 
   // Log no estado `unidades` para verificar alterações
   useEffect(() => {}, [unidades]);
@@ -313,23 +315,79 @@ function Unidades() {
           </button>
         </div>
         {/* Paginação */}
-        <div className="flex justify-between items-center mt-4">
-          <button
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-            className="px-4 py-2 bg-[#14213D] text-white font-semibold  rounded disabled:opacity-50"
-          >
-            Anterior
-          </button>
-          <span>Página {currentPage}</span>
-          <button
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage * itemsPerPage >= filteredUnidades.length}
-            className="px-4 py-2 bg-[#223763] text-white font-semibold rounded disabled:opacity-50"
-          >
-            Próxima
-          </button>
-        </div>
+        <div className="flex justify-center items-center mt-8 space-x-2">
+  {/* Botão de voltar */}
+  <button
+    disabled={currentPage <= 1}
+    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+    className="px-4 py-2 bg-[#14213D]) bg-white text-gray-800 rounded-md disabled:opacity-50 disabled:cursor-not-allowed">
+    &lt;
+  </button>
+
+  {/* Primeira página sempre visível */}
+  <button
+    onClick={() => setCurrentPage(1)}
+    className={`w-10 h-10 flex items-center justify-center rounded ${
+      currentPage === 1 ? "bg-[#14213D] text-white" : "bg-white text-gray-800"
+    }`}
+  >
+    1
+  </button>
+
+  {/* Ellipsis antes das páginas do meio */}
+  {currentPage > 4 && <span className="px-2">...</span>}
+
+  {/* Páginas do meio */}
+  {Array.from({ length: 3 }, (_, i) => {
+    const pageNumber = currentPage <= 3
+      ? i + 2
+      : currentPage >= totalPages - 2
+      ? totalPages - 4 + i
+      : currentPage - 1 + i;
+
+    if (pageNumber > 1 && pageNumber < totalPages) {
+      return (
+        <button
+          key={pageNumber}
+          onClick={() => setCurrentPage(pageNumber)}
+          className={`w-10 h-10 flex items-center justify-center rounded ${
+            currentPage === pageNumber
+               ? "bg-[#14213D] text-white"
+                    : "bg-white text-gray-800"
+          }`}
+        >
+          {pageNumber}
+        </button>
+      );
+    }
+    return null;
+  })}
+
+  {/* Ellipsis depois das páginas do meio */}
+  {currentPage < totalPages - 3 && <span className="px-2">...</span>}
+
+  {/* Última página visível */}
+  {totalPages > 1 && (
+    <button
+      onClick={() => setCurrentPage(totalPages)}
+      className={`w-10 h-10 flex items-center justify-center rounded ${
+        currentPage === totalPages ? "bg-[#14213D] text-white" : "bg-white text-gray-800"
+      }`}
+    >
+      {totalPages}
+    </button>
+  )}
+
+  {/* Botão de avançar */}
+  <button
+    disabled={currentPage >= totalPages}
+    onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+    className="px-4 py-2 bg-white text-gray-800 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
+    >
+    &gt;
+  </button>
+</div>
+
       </main>
 
       {showPopup && (
