@@ -549,7 +549,7 @@ const Pecas = () => {
   }
 
   return (
-    <div className="bg-gray-100 min-h-screen w-[75vw]">
+    <div className="bg-gray-100 min-h-screen w-[90vw] md:w-[80vw] lg:w-[75vw]">
       {/* Botão para abrir o menu */}
            {!menuOpen && (
              <button
