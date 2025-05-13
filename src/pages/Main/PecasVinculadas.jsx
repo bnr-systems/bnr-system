@@ -11,9 +11,8 @@ const PecasVinculadas = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [busca, setBusca] = useState("");
   const [ordem, setOrdem] = useState("data");
-  const [itensPorPagina, setItensPorPagina] = useState(5);
-  const [paginaAtual, setPaginaAtual] = useState(1);
-  
+  const [itemsPerPage, setItemsPerPage] = useState(5);
+  const [currentPage, setCurrentPage] = useState(1); // Paginação
   const userId = localStorage.getItem("id");
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
@@ -52,6 +51,8 @@ const PecasVinculadas = () => {
     fetchData();
   }, [token, userId]);
 
+  
+
   useEffect(() => {
     const fetchPecas = async () => {
       try {
@@ -79,7 +80,7 @@ const PecasVinculadas = () => {
   }, [token]);
 
   useEffect(() => {
-    setPaginaAtual(1);
+    setCurrentPage(1);
   }, [busca]);
 
   const filteredVinculos = useMemo(() => {
@@ -109,12 +110,15 @@ const PecasVinculadas = () => {
   }, [busca, ordem, vinculos, pecas]);
   
   const totalItems = filteredVinculos.length;
-  const totalPaginas = Math.ceil(totalItems / itensPorPagina);
+  const totalPaginas = Math.ceil(totalItems / itemsPerPage);
 
   const vinculosPaginados = filteredVinculos.slice(
-    (paginaAtual - 1) * itensPorPagina,
-    paginaAtual * itensPorPagina
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
   );
+
+  const totalPages = Math.ceil(filteredVinculos.length / itemsPerPage);
+
 
   return (
     <div className="h-screen sm:w-full w-screen flex flex-col p-6 mx-auto">
@@ -208,17 +212,17 @@ const PecasVinculadas = () => {
 
         <div>
           <label
-            htmlFor="itensPorPagina"
+            htmlFor="itemsPerPage"
             className="block text-sm font-bold mb-2"
           >
             Itens por Página
           </label>
           <select
-            id="itensPorPagina"
+            id="itemsPerPage"
             className="w-full border border-gray-300 rounded px-3 py-2"
-            value={itensPorPagina}
+            value={itemsPerPage}
             onChange={(e) =>
-              setItensPorPagina(Math.min(Number(e.target.value), 100))
+              setItemsPerPage(Math.min(Number(e.target.value), 100))
             }
           >
             <option value={5}>5</option>
@@ -278,27 +282,78 @@ const PecasVinculadas = () => {
         + Vincular Novas Peças
       </button>
       {/* Paginação */}
-      <div className="flex justify-center items-center mt-8 space-x-2">
+        <div className="flex justify-center items-center mt-8 space-x-2">
+  {/* Botão de voltar */}
+  <button
+    disabled={currentPage <= 1}
+    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+    className="px-4 py-2 bg-[#14213D]) bg-white text-gray-800 rounded-md disabled:opacity-50 disabled:cursor-not-allowed">
+    &lt;
+  </button>
+
+  {/* Primeira página sempre visível */}
+  <button
+    onClick={() => setCurrentPage(1)}
+    className={`w-10 h-10 flex items-center justify-center rounded ${
+      currentPage === 1 ? "bg-[#14213D] text-white" : "bg-white text-gray-800"
+    }`}
+  >
+    1
+  </button>
+
+  {/* Ellipsis antes das páginas do meio */}
+  {currentPage > 4 && <span className="px-2">...</span>}
+
+  {/* Páginas do meio */}
+  {Array.from({ length: 3 }, (_, i) => {
+    const pageNumber = currentPage <= 3
+      ? i + 2
+      : currentPage >= totalPages - 2
+      ? totalPages - 4 + i
+      : currentPage - 1 + i;
+
+    if (pageNumber > 1 && pageNumber < totalPages) {
+      return (
         <button
-          disabled={paginaAtual <= 1 || totalPaginas === 0}
-          onClick={() => setPaginaAtual((prev) => Math.max(prev - 1, 1))}
-          className="px-4 py-2 relative right-5 bg-[#14213D] text-white font-semibold  rounded disabled:opacity-50"
+          key={pageNumber}
+          onClick={() => setCurrentPage(pageNumber)}
+          className={`w-10 h-10 flex items-center justify-center rounded ${
+            currentPage === pageNumber
+               ? "bg-[#14213D] text-white"
+                    : "bg-white text-gray-800"
+          }`}
         >
-          Anterior
+          {pageNumber}
         </button>
-        <span>
-          Página {totalPaginas === 0 ? 0 : paginaAtual} de {totalPaginas}
-        </span>
-        <button
-          disabled={paginaAtual === totalPaginas || totalPaginas === 0}
-          onClick={() =>
-            setPaginaAtual((prev) => Math.min(prev + 1, totalPaginas))
-          }
-          className="px-4 py-2 relative left-5 bg-[#14213D] text-white font-semibold  rounded disabled:opacity-50"
-        >
-          Próxima
-        </button>
-      </div>
+      );
+    }
+    return null;
+  })}
+
+  {/* Ellipsis depois das páginas do meio */}
+  {currentPage < totalPages - 3 && <span className="px-2">...</span>}
+
+  {/* Última página visível */}
+  {totalPages > 1 && (
+    <button
+      onClick={() => setCurrentPage(totalPages)}
+      className={`w-10 h-10 flex items-center justify-center rounded ${
+        currentPage === totalPages ? "bg-[#14213D] text-white" : "bg-white text-gray-800"
+      }`}
+    >
+      {totalPages}
+    </button>
+  )}
+
+  {/* Botão de avançar */}
+  <button
+    disabled={currentPage >= totalPages}
+    onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+    className="px-4 py-2 bg-white text-gray-800 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
+    >
+    &gt;
+  </button>
+</div>
     </div>
   );
 };

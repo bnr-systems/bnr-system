@@ -16,22 +16,22 @@ const CarrinhoPage = () => {
       const agrupadoPorUnidade = {};
 
       carrinho.forEach((peca) => {
+        if (!peca.unidade_id) return;
+
         if (!agrupadoPorUnidade[peca.unidade_id]) {
           agrupadoPorUnidade[peca.unidade_id] = [];
         }
 
-        const descricao = `${peca.nome_fantasia} - Código: ${
-          peca.codigo
-        }, Quantidade: ${peca.quantidade ?? 1}`;
+        const descricao = `${peca.nome_fantasia} - Código: ${peca.codigo}, Quantidade: ${peca.quantidade ?? 1}`;
         agrupadoPorUnidade[peca.unidade_id].push(descricao);
       });
 
-      const body = Object.entries(agrupadoPorUnidade).map(
-        ([unidadeId, pecas]) => ({
+      const body = Object.entries(agrupadoPorUnidade)
+        .filter(([unidadeId]) => unidadeId && unidadeId !== "undefined")
+        .map(([unidadeId, pecas]) => ({
           unidade_id: Number(unidadeId),
           pecas,
-        })
-      );
+        }));
 
       await api.post(
         "https://vps55372.publiccloud.com.br/api/solicitacao-orcamento",
@@ -125,7 +125,7 @@ const CarrinhoPage = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {carrinho.map((peca, index) => (
+                {carrinho.map((peca) => (
                   <tr key={peca.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 font-medium">
                       {peca.nome_fantasia}
@@ -177,14 +177,7 @@ const CarrinhoPage = () => {
                 isLoading ? "opacity-70 cursor-not-allowed" : ""
               }`}
             >
-              {isLoading ? (
-                "Enviando..."
-              ) : (
-                <>
-                  <Send size={18} />
-                  Solicitar Contato
-                </>
-              )}
+              {isLoading ? "Enviando..." : <><Send size={18} /> Solicitar Contato</>}
             </button>
           </div>
         </>

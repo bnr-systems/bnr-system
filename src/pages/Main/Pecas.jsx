@@ -5,19 +5,16 @@ import { useCarrinho } from "/src/context/CarrinhoContext";
 import { useNavigate } from "react-router-dom";
 
 const Pecas = () => {
-  // Estados principais
   const [pecas, setPecas] = useState([]);
   const [fabricantes, setFabricantes] = useState({});
   const [categorias, setCategorias] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Estados de navegação e UI
   const [menuOpen, setMenuOpen] = useState(false);
   const [filtrosAbertos, setFiltrosAbertos] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(16);
 
-  // Estados de filtros
   const [fabricanteFiltro, setFabricanteFiltro] = useState("");
   const [categoriaFiltro, setCategoriaFiltro] = useState("");
   const [produtoFiltro, setProdutoFiltro] = useState("");
@@ -477,7 +474,6 @@ const Pecas = () => {
       : peca.imagem ||
         "https://dcdn-us.mitiendanube.com/stores/762/826/products/tbm31-783da3b6329b81b93715737641473749-640-0.png";
         
-        console.log(imagemUrl)// Imagem padrão
 
     return (
       <div className="bg-white rounded-lg border border-gray-200 overflow-hidden transition-transform hover:shadow-lg hover:border-blue-300 flex flex-col sm:flex-row">
@@ -541,62 +537,7 @@ const Pecas = () => {
     );
   });
 
-  // Componente de Menu Lateral
-  const SideMenu = () => (
-    <>
-      {/* Botão para abrir o menu */}
-      {!menuOpen && (
-        <button
-          onClick={() => setMenuOpen(true)}
-          className="absolute top-4 left-4 z-50 p-2 rounded text-white"
-        >
-          <img src={iconMenu} alt="Menu" className="w-6 h-6" />
-        </button>
-      )}
-
-      {/* Fundo translúcido e barra lateral */}
-      {menuOpen && (
-        <div
-          onClick={() => setMenuOpen(false)} // Fecha o menu ao clicar fora
-          className="fixed inset-0 bg-black bg-opacity-50 z-30"
-        />
-      )}
-
-      <aside
-        className={`fixed top-0 left-0 h-full bg-gray-800 text-white transition-transform ease-in-out duration-500 z-40 w-64 sm:w-72 ${
-          menuOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
-      >
-        <div className="p-4 font-bold text-lg border-b border-gray-700 flex justify-between items-center">
-          <span>Menu</span>
-          <button
-            onClick={() => setMenuOpen(false)}
-            className="text-white hover:text-gray-300"
-          >
-            ✕
-          </button>
-        </div>
-        <button
-          className="p-4 hover:bg-gray-700 text-left w-full"
-          onClick={() => navigate("/unidades")}
-        >
-          Unidades
-        </button>
-        <button
-          className="p-4 hover:bg-gray-700 text-left w-full"
-          onClick={() => navigate("/pecas")}
-        >
-          Peças
-        </button>
-        <button
-          className="p-4 hover:bg-gray-700 text-left w-full"
-          onClick={() => navigate("/pecasVinculadas")}
-        >
-          Peças Vinculadas
-        </button>
-      </aside>
-    </>
-  );
+  
 
   // Loading state
   if (isLoading) {
@@ -608,10 +549,60 @@ const Pecas = () => {
   }
 
   return (
-    <div className="bg-gray-100 min-h-screen">
-      <SideMenu />
-
-      <header className="bg-gray-100 py-2 px-4 shadow-md sticky top-0 z-50">
+    <div className="bg-gray-100 min-h-screen w-[75vw]">
+      {/* Botão para abrir o menu */}
+           {!menuOpen && (
+             <button
+               onClick={() => setMenuOpen(true)}
+               className="absolute top-4 left-4 z-50 p-2 rounded text-white"
+             >
+               <img src={iconMenu} alt="Menu" className="w-6 h-6" />
+             </button>
+           )}
+     
+           {/* Fundo translúcido e barra lateral */}
+           {menuOpen && (
+             <div
+               onClick={() => setMenuOpen(false)} // Fecha o menu ao clicar fora
+               className="fixed inset-0 bg-black bg-opacity-50 z-30"
+             />
+           )}
+     
+           <aside
+             className={`fixed top-0 left-0 h-full bg-gray-800 text-white transition-transform ease-in-out duration-500 z-40 ${
+               menuOpen ? "translate-x-0" : "-translate-x-full"
+             }`}
+           >
+             <div className="p-4 font-bold text-lg border-b border-gray-700 flex justify-between items-center">
+               <span>Menu</span>
+               <button
+                 onClick={() => setMenuOpen(false)}
+                 className="text-white hover:text-gray-300"
+               >
+                 ✕
+               </button>
+             </div>
+             <button
+               className="p-4 hover:bg-gray-700 text-left w-full"
+               onClick={() => navigate("/unidades")}
+             >
+               Unidades
+             </button>
+             <button
+               className="p-4 hover:bg-gray-700 text-left w-full"
+               onClick={() => navigate("/pecas")}
+             >
+               Peças
+             </button>
+             <button
+               className="p-4 hover:bg-gray-700 text-left w-full"
+               onClick={() => navigate("/pecasVinculadas")}
+             >
+               Peças Vinculadas
+             </button>
+           </aside>
+     
+      <header className="bg-gray-100 py-2 px-4 shadow-md sticky top-0">
         <div className="max-w-screen-xl mx-auto w-full px-4">
           <div className="flex items-center">
             {/* Barra de busca destacada */}
@@ -893,97 +884,79 @@ const Pecas = () => {
             </div>
           )}
 
-          {/* Paginação atualizada com estilo Mercado Livre */}
-          {totalPages > 1 && (
-            <div className="mt-6 flex justify-center">
-              <div className="inline-flex rounded-md shadow">
-                <button
-                  onClick={() => setCurrentPage(1)}
-                  disabled={currentPage === 1}
-                  className={`px-4 py-2 rounded-l-md border ${
-                    currentPage === 1
-                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                      : "bg-white text-blue-500 hover:bg-blue-50"
-                  }`}
-                >
-                  «
-                </button>
-                <button
-                  onClick={() => setCurrentPage(currentPage - 1)}
-                  disabled={currentPage === 1}
-                  className={`px-4 py-2 border-t border-b ${
-                    currentPage === 1
-                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                      : "bg-white text-blue-500 hover:bg-blue-50"
-                  }`}
-                >
-                  ‹
-                </button>
+           {/* Paginação */}
+        <div className="flex justify-center items-center mt-8 space-x-2">
+  {/* Botão de voltar */}
+  <button
+    disabled={currentPage <= 1}
+    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+    className="px-4 py-2 bg-[#14213D]) bg-white text-gray-800 rounded-md disabled:opacity-50 disabled:cursor-not-allowed">
+    &lt;
+  </button>
 
-                {/* Paginação dinâmica */}
-                {[...Array(totalPages)].map((_, i) => {
-                  const pageNum = i + 1;
-                  // Mostrar apenas páginas próximas da atual e primeira/última
-                  if (
-                    pageNum === 1 ||
-                    pageNum === totalPages ||
-                    (pageNum >= currentPage - 1 && pageNum <= currentPage + 1)
-                  ) {
-                    return (
-                      <button
-                        key={pageNum}
-                        onClick={() => setCurrentPage(pageNum)}
-                        className={`px-4 py-2 border-t border-b ${
-                          currentPage === pageNum
-                            ? "bg-blue-500 text-white"
-                            : "bg-white text-blue-500 hover:bg-blue-50"
-                        }`}
-                      >
-                        {pageNum}
-                      </button>
-                    );
-                  } else if (
-                    (pageNum === currentPage - 2 && currentPage > 3) ||
-                    (pageNum === currentPage + 2 &&
-                      currentPage < totalPages - 2)
-                  ) {
-                    return (
-                      <span
-                        key={pageNum}
-                        className="px-4 py-2 border-t border-b bg-white text-gray-500"
-                      >
-                        ...
-                      </span>
-                    );
-                  }
-                  return null;
-                })}
+  {/* Primeira página sempre visível */}
+  <button
+    onClick={() => setCurrentPage(1)}
+    className={`w-10 h-10 flex items-center justify-center rounded ${
+      currentPage === 1 ? "bg-[#14213D] text-white" : "bg-white text-gray-800"
+    }`}
+  >
+    1
+  </button>
 
-                <button
-                  onClick={() => setCurrentPage(currentPage + 1)}
-                  disabled={currentPage === totalPages}
-                  className={`px-4 py-2 border-t border-b ${
-                    currentPage === totalPages
-                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                      : "bg-white text-blue-500 hover:bg-blue-50"
-                  }`}
-                >
-                  ›
-                </button>
-                <button
-                  onClick={() => setCurrentPage(totalPages)}
-                  disabled={currentPage === totalPages}
-                  className={`px-4 py-2 rounded-r-md border ${
-                    currentPage === totalPages
-                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                      : "bg-white text-blue-500 hover:bg-blue-50"
-                  }`}
-                >
-                  »
-                </button>
-              </div>
-            </div>
-          )}
+  {/* Ellipsis antes das páginas do meio */}
+  {currentPage > 4 && <span className="px-2">...</span>}
+
+  {/* Páginas do meio */}
+  {Array.from({ length: 3 }, (_, i) => {
+    const pageNumber = currentPage <= 3
+      ? i + 2
+      : currentPage >= totalPages - 2
+      ? totalPages - 4 + i
+      : currentPage - 1 + i;
+
+    if (pageNumber > 1 && pageNumber < totalPages) {
+      return (
+        <button
+          key={pageNumber}
+          onClick={() => setCurrentPage(pageNumber)}
+          className={`w-10 h-10 flex items-center justify-center rounded ${
+            currentPage === pageNumber
+               ? "bg-[#14213D] text-white"
+                    : "bg-white text-gray-800"
+          }`}
+        >
+          {pageNumber}
+        </button>
+      );
+    }
+    return null;
+  })}
+
+  {/* Ellipsis depois das páginas do meio */}
+  {currentPage < totalPages - 3 && <span className="px-2">...</span>}
+
+  {/* Última página visível */}
+  {totalPages > 1 && (
+    <button
+      onClick={() => setCurrentPage(totalPages)}
+      className={`w-10 h-10 flex items-center justify-center rounded ${
+        currentPage === totalPages ? "bg-[#14213D] text-white" : "bg-white text-gray-800"
+      }`}
+    >
+      {totalPages}
+    </button>
+  )}
+
+  {/* Botão de avançar */}
+  <button
+    disabled={currentPage >= totalPages}
+    onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+    className="px-4 py-2 bg-white text-gray-800 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
+    >
+    &gt;
+  </button>
+</div>
         </div>
       </div>
 

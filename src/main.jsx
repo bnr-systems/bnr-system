@@ -19,7 +19,6 @@ import PecasVinculadas from './pages/Main/PecasVinculadas';
 import Perfil from './pages/Perfil/Perfil';
 import CarrinhoPage from './pages/Main/CarrinhoPage';
 import { CarrinhoProvider } from './context/CarrinhoContext';
-import PecasPromocao from './pages/Main/PecasPromocao';
 
 const router = createBrowserRouter([
   {
@@ -45,10 +44,6 @@ const router = createBrowserRouter([
       {
         path: '/Pecas',
         element: <Pecas />
-      },
-      {
-        path: '/PecasPromocao',
-        element: <PecasPromocao />
       },
       {
         path: '/CarrinhoPage',
