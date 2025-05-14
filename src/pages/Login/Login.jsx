@@ -1,34 +1,59 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useForm } from "react-hook-form";
 import validator from "validator";
-import { FaSpinner } from "react-icons/fa";
 import eyeOn from "/src/assets/images/eye.svg";
 import eyeOff from "/src/assets/images/eye-off.svg";
 import api from "/src/api/api";
 
 function Login() {
   const navigate = useNavigate();
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
+  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [formErrors, setFormErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [apiError, setApiError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const loginUser = async (data) => {
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+    setFormErrors({ ...formErrors, [name]: null });
+    setApiError("");
+  };
+
+  const validateForm = () => {
+    const errors = {};
+
+    if (!formData.email) {
+      errors.email = "Preencha seu e-mail";
+    } else if (!validator.isEmail(formData.email)) {
+      errors.email = "E-mail inválido";
+    }
+
+    if (!formData.password) {
+      errors.password = "Preencha sua senha";
+    } else if (formData.password.length < 7) {
+      errors.password = "Senha muito curta";
+    } else if (!/^(?=.*[A-Z])(?=.*\d).*$/.test(formData.password)) {
+      errors.password = "A senha deve conter ao menos uma letra maiúscula e um número.";
+    }
+
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const loginUser = async () => {
+    if (!validateForm()) return;
+
     setLoading(true);
     try {
       const response = await api.post("/login", {
-        email: data.email,
-        password: data.password,
+        email: formData.email,
+        password: formData.password,
       });
 
       const { id, token, user } = response.data;
-
       const existingUserId = localStorage.getItem("id");
+
       if (existingUserId && existingUserId !== id.toString()) {
         localStorage.clear();
       }
@@ -45,12 +70,12 @@ function Login() {
           });
           localStorage.setItem("user", JSON.stringify(profileResponse.data.data));
         } catch (error) {
-          console.error("Error fetching user profile:", error);
+          console.error("Erro ao buscar perfil:", error);
         }
       }
 
       window.dispatchEvent(new Event("userUpdated"));
-      navigate("/Unidades", { state: { email: data.email } });
+      navigate("/Unidades", { state: { email: formData.email } });
     } catch (error) {
       if (error.response) {
         if (error.response.status === 403) {
@@ -58,25 +83,13 @@ function Login() {
         } else if (error.response.status === 401) {
           setApiError("Usuário não registrado. Tente novamente.");
         } else {
-          setApiError("E-mail ou senha incorretos.");
+          setApiError("E-mail ou senha incorretos");
         }
       } else {
         setApiError("Erro no servidor. Atualize a página e tente novamente.");
       }
     } finally {
       setLoading(false);
-    }
-  };
-
-  const onSubmit = (data) => {
-    setApiError("");
-    loginUser(data);
-  };
-
-  const handleKeyDown = (e) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      handleSubmit(onSubmit)();
     }
   };
 
@@ -87,61 +100,47 @@ function Login() {
       <main className="flex flex-col items-center justify-center bg-[#E5E5E5] p-4 w-full">
         <form
           className="bg-white rounded-lg shadow-xl p-8 w-full max-w-md"
-          onSubmit={handleSubmit(onSubmit)}
-          onKeyDown={handleKeyDown}
+          onSubmit={(e) => {
+            e.preventDefault();
+            loginUser();
+          }}
           noValidate
         >
           <h2 className="text-2xl font-bold text-gray-700 mb-6 text-center">Login</h2>
 
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
+            <label htmlFor="email" className="block text-gray-700 text-sm font-bold mb-2">
               E-mail
             </label>
             <input
               type="email"
               id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
               className={`border rounded w-full py-2 px-3 text-gray-700 ${
-                errors?.email ? "border-red-500" : "border-gray-400"
+                formErrors.email ? "border-red-500" : "border-gray-400"
               }`}
-              {...register("email", {
-                required: true,
-                validate: (value) => validator.isEmail(value),
-              })}
-              onChange={(e) => {
-                register("email").onChange(e);
-                setApiError("");
-              }}
             />
-            {errors?.email?.type === "required" && (
-              <p className="text-red-500 text-xs">Preencha seu e-mail</p>
-            )}
-            {errors?.email?.type === "validate" && (
-              <p className="text-red-500 text-xs">E-mail inválido</p>
+            {formErrors.email && (
+              <p className="text-red-500 text-xs mt-1">{formErrors.email}</p>
             )}
           </div>
 
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
+            <label htmlFor="password" className="block text-gray-700 text-sm font-bold mb-2">
               Senha
             </label>
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
                 id="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
                 className={`border rounded w-full py-2 px-3 text-gray-700 ${
-                  errors?.password ? "border-red-500" : "border-gray-400"
+                  formErrors.password ? "border-red-500" : "border-gray-400"
                 }`}
-                {...register("password", {
-                  required: true,
-                  minLength: 7,
-                  validate: (value) =>
-                    /^(?=.*[A-Z])(?=.*\d).*$/.test(value) ||
-                    "A senha deve conter ao menos uma letra maiúscula e um número.",
-                })}
-                onChange={(e) => {
-                  register("password").onChange(e);
-                  setApiError("");
-                }}
               />
               <img
                 src={showPassword ? eyeOff : eyeOn}
@@ -150,14 +149,8 @@ function Login() {
                 onClick={toggleShowPassword}
               />
             </div>
-            {errors?.password?.type === "required" && (
-              <p className="text-red-500 text-xs mt-2">Preencha sua senha</p>
-            )}
-            {errors?.password?.type === "minLength" && (
-              <p className="text-red-500 text-xs mt-2">Senha muito curta</p>
-            )}
-            {errors?.password?.type === "validate" && (
-              <p className="text-red-500 text-xs mt-2">{errors.password.message}</p>
+            {formErrors.password && (
+              <p className="text-red-500 text-xs mt-1">{formErrors.password}</p>
             )}
           </div>
 
@@ -171,10 +164,10 @@ function Login() {
             className="bg-[#FCA311] text-white font-bold py-2 px-4 rounded w-full hover:bg-[#fcb645] transition-all duration-300 flex items-center justify-center"
           >
             {loading ? (
-              <>
-                <FaSpinner className="animate-spin mr-2" />
+              <div className="flex items-center justify-center">
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
                 Entrando...
-              </>
+              </div>
             ) : (
               "Entrar"
             )}
