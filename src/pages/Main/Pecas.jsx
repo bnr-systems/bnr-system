@@ -405,6 +405,10 @@ const Pecas = () => {
       setCurrentIndex((prev) => (prev === 0 ? items.length - 1 : prev - 1));
     };
 
+useEffect(() => {
+  console.log("Estado detalhesPeca atualizado:", detalhesPeca);
+}, [detalhesPeca]);
+
     return (
       <div className="relative w-full">
         <div className="overflow-hidden rounded-lg">
@@ -467,6 +471,7 @@ const Pecas = () => {
   // Componente de Card de Peça - Extraído para melhorar a performance
   // Alterado para estilo horizontal como no Mercado Livre
   const PecaCard = React.memo(({ peca }) => {
+
     const imagemUrl = peca.foto
       ? peca.foto.startsWith("http")
         ? peca.foto
@@ -503,9 +508,6 @@ const Pecas = () => {
               >
                 {peca.nome_fantasia || "-"}
               </h3>
-              <p className="text-xs text-gray-600 mb-1">
-                {peca.estado}, {peca.municipio}
-              </p>
             </div>
 
             <div>
@@ -963,6 +965,7 @@ const Pecas = () => {
       {/* Modal para detalhes da peça */}
       {detalhesPeca && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          {console.log("Renderizando modal com detalhesPeca:", detalhesPeca)}
           <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center p-4 border-b">
               <h2 className="text-xl font-bold">Detalhes da Peça</h2>
@@ -982,9 +985,11 @@ const Pecas = () => {
                       detalhesPeca.foto
                         ? detalhesPeca.foto.startsWith("http")
                           ? detalhesPeca.foto
-                          : `https://vps55372.publiccloud.com.br/storage/fotos/${detalhesPeca.foto}`
+                          : `https://vps55372.publiccloud.com.br/${detalhesPeca.foto}`
                         : detalhesPeca.imagem ||
                           "https://dcdn-us.mitiendanube.com/stores/762/826/products/tbm31-783da3b6329b81b93715737641473749-640-0.png"
+
+                          
                     }
                     alt={detalhesPeca.nome_fantasia || "Peça automotiva"}
                     className="w-full h-auto rounded-lg border"
@@ -1058,6 +1063,7 @@ const Pecas = () => {
           </div>
         </div>
       )}
+
 
       {/* Modal para promoções (só aparece para oficinas) */}
       {showPromotionPopup && userType === "oficina" && (

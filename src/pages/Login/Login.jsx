@@ -1,98 +1,129 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useForm } from "react-hook-form";
 import validator from "validator";
-import { FaSpinner } from "react-icons/fa";
 import eyeOn from "/src/assets/images/eye.svg";
 import eyeOff from "/src/assets/images/eye-off.svg";
 import api from "/src/api/api";
 
 function Login() {
   const navigate = useNavigate();
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
+  const [formData, setFormData] = useState({
+    email: "",
+    password: ""
+  });
+  const [formErrors, setFormErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [apiError, setApiError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const loginUser = async (data) => {
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value
+    });
+    setFormErrors({
+      ...formErrors,
+      [name]: null
+    });
+    setApiError("");
+  };
+
+  const validateForm = () => {
+    const errors = {};
+    
+    if (!formData.email) {
+      errors.email = "Preencha seu e-mail";
+    } else if (!validator.isEmail(formData.email)) {
+      errors.email = "E-mail inválido";
+    }
+    
+    if (!formData.password) {
+      errors.password = "Preencha sua senha";
+    } else if (formData.password.length < 7) {
+      errors.password = "Senha muito curta";
+    } else if (!/^(?=.*[A-Z])(?=.*\d).*$/.test(formData.password)) {
+      errors.password = "A senha deve conter ao menos uma letra maiúscula e um número.";
+    }
+    
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const loginUser = async () => {
+    if (!validateForm()) return;
+    
     setLoading(true);
     try {
       const response = await api.post("/login", {
-        email: data.email,
-        password: data.password,
+        email: formData.email,
+        password: formData.password,
       });
-    // Armazenar ID e Token no localStorage
-    const { id, token, user } = response.data;
+      
+      const { id, token, user } = response.data;
 
-    // Verificar se há um usuário diferente logado
-    const existingUserId = localStorage.getItem("id");
-    if (existingUserId && existingUserId !== id.toString()) {
-      localStorage.clear(); // Limpa o localStorage ao trocar de conta
-    }
-
-    localStorage.setItem("id", id);
-    localStorage.setItem("token", token);
-    
-    // Also save the user object for the Header component
-    if (user) {
-      localStorage.setItem("user", JSON.stringify(user));
-    } else {
-      // If user object isn't included in the response, we need to fetch it
-      try {
-        const profileResponse = await api.get("/profile", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        localStorage.setItem("user", JSON.stringify(profileResponse.data.data));
-      } catch (error) {
-        console.error("Error fetching user profile:", error);
+      const existingUserId = localStorage.getItem("id");
+      if (existingUserId && existingUserId !== id.toString()) {
       }
-    }
-    
-    // Notify other components (like Header) about user login
-    window.dispatchEvent(new Event("userUpdated"));
 
-    navigate("/Unidades", { state: { email: data.email } });
-  } catch (error) {
-    if (error.response) {
-      if (error.response.status === 403) {
-        setApiError(
-          "Usuário não confirmado. Por favor, verifique seu e-mail."
-        );
+      localStorage.setItem("id", id);
+      localStorage.setItem("token", token);
+      
+      if (user) {
+        localStorage.setItem("user", JSON.stringify(user));
       } else {
-        setApiError("E-mail ou senha incorretos");
+        fetchAndStoreUserProfile(token);
       }
-    } else {
-      setApiError("Usuário não registrado. Tente novamente");
+      
+      window.dispatchEvent(new Event("userUpdated"));
+
+      navigate("/Unidades", { state: { email: formData.email } });
+    } catch (error) {
+      if (error.response) {
+        if (error.response.status === 403) {
+          setApiError("Usuário não confirmado. Por favor, verifique seu e-mail.");
+        } else {
+          setApiError("E-mail ou senha incorretos");
+        }
+      } else {
+        setApiError("Usuário não registrado. Tente novamente");
+      }
+    } finally {
+      setLoading(false);
     }
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
-const onSubmit = (data) => {
-  setApiError(""); // Limpar erros anteriores
-  loginUser(data);
-};
+  const fetchAndStoreUserProfile = async (token) => {
+    try {
+      const profileResponse = await api.get("/profile", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      localStorage.setItem("user", JSON.stringify(profileResponse.data.data));
+    } catch (error) {
+      console.error("Error fetching user profile:", error);
+    }
+  };
 
-const handleKeyDown = (e) => {
-  if (e.key === "Enter") {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    handleSubmit(onSubmit)();
-  }
-};
+    loginUser();
+  };
 
-const toggleShowPassword = () => setShowPassword(!showPassword);
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      loginUser();
+    }
+  };
+
+  const toggleShowPassword = () => setShowPassword(!showPassword);
 
   return (
     <div className="flex flex-col h-full items-center justify-center bg-[#E5E5E5] p-4 w-full">
       <main className="flex flex-col items-center justify-center bg-[#E5E5E5] p-4 w-full">
         <form
           className="bg-white rounded-lg shadow-xl p-8 w-full max-w-md"
-          onSubmit={handleSubmit(onSubmit)}
+          onSubmit={handleSubmit}
           onKeyDown={handleKeyDown}
           noValidate
         >
@@ -110,23 +141,15 @@ const toggleShowPassword = () => setShowPassword(!showPassword);
             <input
               type="email"
               id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
               className={`${
-                errors?.email ? "border-red-500" : "border-gray-400"
+                formErrors.email ? "border-red-500" : "border-gray-400"
               } border rounded w-full py-2 px-3 text-gray-700`}
-              {...register("email", {
-                required: true,
-                validate: (value) => validator.isEmail(value),
-              })}
-              onChange={(e) => {
-                register("email").onChange(e);
-                setApiError("");
-              }}
             />
-            {errors?.email?.type === "required" && (
-              <p className="text-red-500 text-xs">Preencha seu e-mail</p>
-            )}
-            {errors?.email?.type === "validate" && (
-              <p className="text-red-500 text-xs">E-mail inválido</p>
+            {formErrors.email && (
+              <p className="text-red-500 text-xs">{formErrors.email}</p>
             )}
           </div>
 
@@ -141,20 +164,12 @@ const toggleShowPassword = () => setShowPassword(!showPassword);
               <input
                 type={showPassword ? "text" : "password"}
                 id="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
                 className={`${
-                  errors?.password ? "border-red-500" : "border-gray-400"
+                  formErrors.password ? "border-red-500" : "border-gray-400"
                 } border rounded w-full py-2 px-3 text-gray-700`}
-                {...register("password", {
-                  required: true,
-                  minLength: 7,
-                  validate: (value) =>
-                    /^(?=.*[A-Z])(?=.*\d).*$/.test(value) ||
-                    "A senha deve conter ao menos uma letra maiúscula e um número.",
-                })}
-                onChange={(e) => {
-                  register("password").onChange(e);
-                  setApiError("");
-                }}
               />
 
               <img
@@ -164,14 +179,8 @@ const toggleShowPassword = () => setShowPassword(!showPassword);
                 onClick={toggleShowPassword}
               />
             </div>
-            {errors?.password?.type === "required" && (
-              <p className="text-red-500 text-xs mt-2">Preencha sua senha</p>
-            )}
-            {errors?.password?.type === "minLength" && (
-              <p className="text-red-500 text-xs mt-2">Senha muito curta</p>
-            )}
-            {errors?.password?.type === "validate" && (
-              <p className="text-red-500 text-xs mt-2">{errors.password.message}</p>
+            {formErrors.password && (
+              <p className="text-red-500 text-xs mt-2">{formErrors.password}</p>
             )}
           </div>
 
@@ -185,10 +194,10 @@ const toggleShowPassword = () => setShowPassword(!showPassword);
             disabled={loading}
           >
             {loading ? (
-              <>
-                <FaSpinner className="animate-spin mr-2" />
+              <div className="flex items-center justify-center">
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
                 Entrando...
-              </>
+              </div>
             ) : (
               "Entrar"
             )}
