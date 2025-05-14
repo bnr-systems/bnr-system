@@ -488,7 +488,6 @@ const Pecas = () => {
             loading="lazy"
           />
 
-          {console.log("oiii ", imagemUrl)}
         </div>
 
         {/* Lado direito: Informações */}
