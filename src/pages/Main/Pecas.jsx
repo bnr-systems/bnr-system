@@ -405,9 +405,6 @@ const Pecas = () => {
       setCurrentIndex((prev) => (prev === 0 ? items.length - 1 : prev - 1));
     };
 
-useEffect(() => {
-  console.log("Estado detalhesPeca atualizado:", detalhesPeca);
-}, [detalhesPeca]);
 
     return (
       <div className="relative w-full">
@@ -475,7 +472,7 @@ useEffect(() => {
     const imagemUrl = peca.foto
       ? peca.foto.startsWith("http")
         ? peca.foto
-        : `https://vps55372.publiccloud.com.br/storage/fotos/${peca.foto}`
+        : `https://vps55372.publiccloud.com.br/${peca.foto}`
       : peca.imagem ||
         "https://dcdn-us.mitiendanube.com/stores/762/826/products/tbm31-783da3b6329b81b93715737641473749-640-0.png";
         
@@ -490,6 +487,8 @@ useEffect(() => {
             className="w-full h-full object-contain hover:scale-105 transition-transform duration-300"
             loading="lazy"
           />
+
+          {console.log("oiii ", imagemUrl)}
         </div>
 
         {/* Lado direito: Informações */}
