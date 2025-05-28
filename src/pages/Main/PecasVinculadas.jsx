@@ -13,10 +13,26 @@ const PecasVinculadas = () => {
   const [ordem, setOrdem] = useState("data");
   const [itemsPerPage, setItemsPerPage] = useState(5);
   const [currentPage, setCurrentPage] = useState(1); // Paginação
+  const [userType, setUserType] = useState([]);
+
   const userId = localStorage.getItem("id");
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
 
+  const fetchUserType = async () => {
+      try {
+        const response = await api.get(
+          "https://vps55372.publiccloud.com.br/api/profile",
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        const tipo = response?.data?.data?.userType;
+        setUserType(tipo);
+      } catch (error) {
+        console.error("Erro ao buscar tipo de usuário:", error);
+      }
+    fetchUserType();
+
+    };
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
@@ -169,17 +185,21 @@ const PecasVinculadas = () => {
         </button>
         <button
           className="p-4 hover:bg-gray-700 text-left w-full"
-          onClick={() => navigate("/pecas")}
+          onClick={() => navigate("/PecasRouter")}
         >
           Peças
         </button>
-        <button
-          className="p-4 hover:bg-gray-700 text-left w-full"
-          onClick={() => navigate("/pecasVinculadas")}
-        >
-          Peças Vinculadas
-        </button>
+
+        {userType === "fornecedor" && (
+          <button
+            className="p-4 hover:bg-gray-700 text-left w-full"
+            onClick={() => navigate("/pecasVinculadas")}
+          >
+            Peças Vinculadas
+          </button>
+        )}
       </aside>
+
       <div className="mb-4 grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
           <label htmlFor="busca" className="block text-sm font-bold mb-2">

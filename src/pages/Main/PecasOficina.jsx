@@ -4,7 +4,7 @@ import api from "/src/api/api";
 import { useCarrinho } from "/src/context/CarrinhoContext";
 import { useNavigate } from "react-router-dom";
 
-const Pecas = () => {
+const PecasOficina = () => {
   const [pecas, setPecas] = useState([]);
   const [fabricantes, setFabricantes] = useState({});
   const [categorias, setCategorias] = useState([]);
@@ -19,16 +19,14 @@ const Pecas = () => {
   const [categoriaFiltro, setCategoriaFiltro] = useState("");
   const [produtoFiltro, setProdutoFiltro] = useState("");
   const [ordem, setOrdem] = useState("data");
-  const [busca, setBusca] = useState(""); // Texto digitado pelo usuário
-  const [termoBusca, setTermoBusca] = useState(""); // Termo efetivamente usado na busca
+  const [busca, setBusca] = useState(""); 
+  const [termoBusca, setTermoBusca] = useState("");
 
-  // Estados de detalhes e modais
   const [detalhesPeca, setDetalhesPeca] = useState(null);
   const [detalhesAbertos, setDetalhesAbertos] = useState(null);
   const [showContactSuccessPopup, setShowContactSuccessPopup] = useState(false);
   const [showCarrinhoPopup, setShowCarrinhoPopup] = useState(false);
 
-  // Estados para feature de oficina
   const [userType, setUserType] = useState("");
   const [showPromotionPopup, setShowPromotionPopup] = useState(false);
   const [pecasPromocao, setPecasPromocao] = useState([]);
@@ -47,6 +45,21 @@ const Pecas = () => {
   }, [busca]);
 
   // Função para pressionar Enter e realizar a busca
+
+  const fetchUserType = async () => {
+      try {
+        const response = await api.get(
+          "https://vps55372.publiccloud.com.br/api/profile",
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        const tipo = response?.data?.data?.userType;
+        setUserType(tipo);
+      } catch (error) {
+        console.error("Erro ao buscar tipo de usuário:", error);
+      }
+    fetchUserType();
+
+    };
   const handleKeyPress = useCallback(
     (e) => {
       if (e.key === "Enter") {
@@ -475,7 +488,7 @@ useEffect(() => {
     const imagemUrl = peca.foto
       ? peca.foto.startsWith("http")
         ? peca.foto
-        : `https://vps55372.publiccloud.com.br/storage/fotos/${peca.foto}`
+        : `https://vps55372.publiccloud.com.br/${peca.foto}`
       : peca.imagem ||
         "https://dcdn-us.mitiendanube.com/stores/762/826/products/tbm31-783da3b6329b81b93715737641473749-640-0.png";
         
@@ -554,55 +567,58 @@ useEffect(() => {
     <div className="bg-gray-100 min-h-screen w-[90vw] md:w-[80vw] lg:w-[75vw]">
       {/* Botão para abrir o menu */}
            {!menuOpen && (
-             <button
-               onClick={() => setMenuOpen(true)}
-               className="absolute top-4 left-4 z-50 p-2 rounded text-white"
-             >
-               <img src={iconMenu} alt="Menu" className="w-6 h-6" />
-             </button>
-           )}
-     
-           {/* Fundo translúcido e barra lateral */}
-           {menuOpen && (
-             <div
-               onClick={() => setMenuOpen(false)} // Fecha o menu ao clicar fora
-               className="fixed inset-0 bg-black bg-opacity-50 z-30"
-             />
-           )}
-     
-           <aside
-             className={`fixed top-0 left-0 h-full bg-gray-800 text-white transition-transform ease-in-out duration-500 z-40 ${
-               menuOpen ? "translate-x-0" : "-translate-x-full"
-             }`}
-           >
-             <div className="p-4 font-bold text-lg border-b border-gray-700 flex justify-between items-center">
-               <span>Menu</span>
-               <button
-                 onClick={() => setMenuOpen(false)}
-                 className="text-white hover:text-gray-300"
-               >
-                 ✕
-               </button>
-             </div>
-             <button
-               className="p-4 hover:bg-gray-700 text-left w-full"
-               onClick={() => navigate("/unidades")}
-             >
-               Unidades
-             </button>
-             <button
-               className="p-4 hover:bg-gray-700 text-left w-full"
-               onClick={() => navigate("/pecas")}
-             >
-               Peças
-             </button>
-             <button
-               className="p-4 hover:bg-gray-700 text-left w-full"
-               onClick={() => navigate("/pecasVinculadas")}
-             >
-               Peças Vinculadas
-             </button>
-           </aside>
+        <button
+          onClick={() => setMenuOpen(true)}
+          className="absolute top-4 left-4 z-50 p-2 rounded text-white"
+        >
+          <img src={iconMenu} alt="Menu" className="w-6 h-6" />
+        </button>
+      )}
+
+      {menuOpen && (
+        <div
+          onClick={() => setMenuOpen(false)}
+          className="fixed inset-0 bg-black bg-opacity-50 z-30"
+        />
+      )}
+
+      <aside
+        className={`fixed top-0 left-0 h-full bg-gray-800 text-white transition-transform ease-in-out duration-500 z-40 ${
+          menuOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        <div className="p-4 font-bold text-lg border-b border-gray-700 flex justify-between items-center">
+          <span>Menu</span>
+          <button
+            onClick={() => setMenuOpen(false)}
+            className="text-white hover:text-gray-300"
+          >
+            ✕
+          </button>
+        </div>
+        <button
+          className="p-4 hover:bg-gray-700 text-left w-full"
+          onClick={() => navigate("/unidades")}
+        >
+          Unidades
+        </button>
+        <button
+          className="p-4 hover:bg-gray-700 text-left w-full"
+          onClick={() => navigate("/PecasRouter")}
+        >
+          Peças
+        </button>
+
+        {userType === "fornecedor" && (
+          <button
+            className="p-4 hover:bg-gray-700 text-left w-full"
+            onClick={() => navigate("/pecasVinculadas")}
+          >
+            Peças Vinculadas
+          </button>
+        )}
+      </aside>
+
      
       <header className="bg-gray-100 py-2 px-4 shadow-md sticky top-0">
         <div className="max-w-screen-xl mx-auto w-full px-4">
@@ -1127,4 +1143,4 @@ useEffect(() => {
   );
 };
 
-export default Pecas;
+export default PecasOficina;

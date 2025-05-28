@@ -26,11 +26,27 @@ const VincularPecas = () => {
   const [filteredUnidades, setFilteredUnidades] = useState([]);
   const [busca, setBusca] = useState("");
   const [vinculos, setVinculos] = useState([]);
+  const [userType, setUserType] = useState([]);
   const navigate = useNavigate();
 
   const userId = localStorage.getItem("id");
   const token = localStorage.getItem("token");
 
+
+  const fetchUserType = async () => {
+      try {
+        const response = await api.get(
+          "https://vps55372.publiccloud.com.br/api/profile",
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        const tipo = response?.data?.data?.userType;
+        setUserType(tipo);
+      } catch (error) {
+        console.error("Erro ao buscar tipo de usuário:", error);
+      }
+    fetchUserType();
+
+    };
   useEffect(() => {
     const fetchData = async () => {
       if (!userId || !token) {
@@ -185,9 +201,18 @@ const VincularPecas = () => {
       )}
 
       {/* Fundo translúcido e barra lateral */}
+      {!menuOpen && (
+        <button
+          onClick={() => setMenuOpen(true)}
+          className="absolute top-4 left-4 z-50 p-2 rounded text-white"
+        >
+          <img src={iconMenu} alt="Menu" className="w-6 h-6" />
+        </button>
+      )}
+
       {menuOpen && (
         <div
-          onClick={() => setMenuOpen(false)} // Fecha o menu ao clicar fora
+          onClick={() => setMenuOpen(false)}
           className="fixed inset-0 bg-black bg-opacity-50 z-30"
         />
       )}
@@ -214,17 +239,21 @@ const VincularPecas = () => {
         </button>
         <button
           className="p-4 hover:bg-gray-700 text-left w-full"
-          onClick={() => navigate("/pecas")}
+          onClick={() => navigate("/PecasRouter")}
         >
           Peças
         </button>
-        <button
-          className="p-4 hover:bg-gray-700 text-left w-full"
-          onClick={() => navigate("/pecasVinculadas")}
-        >
-          Peças Vinculadas
-        </button>
+
+        {userType === "fornecedor" && (
+          <button
+            className="p-4 hover:bg-gray-700 text-left w-full"
+            onClick={() => navigate("/pecasVinculadas")}
+          >
+            Peças Vinculadas
+          </button>
+        )}
       </aside>
+
       <h1 className="flex justify-center items-center text-center mb-6  text-2xl font-bold text-gray-900">
         Vincular Peças às Unidades
       </h1>

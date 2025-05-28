@@ -16,16 +16,34 @@ function Unidades() {
   const [itemsPerPage, setItemsPerPage] = useState(20); // Itens por página
   const [sortOrder, setSortOrder] = useState("asc"); // Ordenação
   const [totalUnidades, setTotalUnidades] = useState(0);
+  const [userType, setUserType] = useState(null);
+  
   const navigate = useNavigate();
 
-  // Verifica login ao carregar a página
+  const token = localStorage.getItem("token");
+
   useEffect(() => {
-    const token = localStorage.getItem("token");
     if (!token) {
       alert("Faça o login primeiro!");
-      navigate("/login"); // Redireciona para a página de login
+      navigate("/login"); 
     }
   }, [navigate]);
+
+  const fetchUserType = async () => {
+      try {
+        const response = await api.get(
+          "https://vps55372.publiccloud.com.br/api/profile",
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        const tipo = response?.data?.data?.userType;
+        setUserType(tipo);
+      } catch (error) {
+        console.error("Erro ao buscar tipo de usuário:", error);
+      }
+    fetchUserType();
+
+    };
+
 
   const fetchUnidades = async () => {
     try {
@@ -137,7 +155,6 @@ function Unidades() {
   );
   return (
     <div className="flex min-h-screen">
-      {/* Botão para abrir o menu */}
       {!menuOpen && (
         <button
           onClick={() => setMenuOpen(true)}
@@ -147,10 +164,9 @@ function Unidades() {
         </button>
       )}
 
-      {/* Fundo translúcido e barra lateral */}
       {menuOpen && (
         <div
-          onClick={() => setMenuOpen(false)} // Fecha o menu ao clicar fora
+          onClick={() => setMenuOpen(false)}
           className="fixed inset-0 bg-black bg-opacity-50 z-30"
         />
       )}
@@ -177,16 +193,19 @@ function Unidades() {
         </button>
         <button
           className="p-4 hover:bg-gray-700 text-left w-full"
-          onClick={() => navigate("/pecas")}
+          onClick={() => navigate("/PecasRouter")}
         >
           Peças
         </button>
-        <button
-          className="p-4 hover:bg-gray-700 text-left w-full"
-          onClick={() => navigate("/pecasVinculadas")}
-        >
-          Peças Vinculadas
-        </button>
+
+        {userType === "fornecedor" && (
+          <button
+            className="p-4 hover:bg-gray-700 text-left w-full"
+            onClick={() => navigate("/pecasVinculadas")}
+          >
+            Peças Vinculadas
+          </button>
+        )}
       </aside>
 
       <main className="flex-1 p-8 bg-gray-100 overflow-y-auto rounded-md shadow-xl lg:w-[90vw]">
