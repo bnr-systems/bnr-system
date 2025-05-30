@@ -18,13 +18,29 @@ function CadastroPecas() {
   const [produtos, setProdutos] = useState([]);
   const [categoriaSelecionada, setCategoriaSelecionada] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false); // Controle do estado da barra lateral
+    const [userType, setUserType] = useState([]);
+
   const [isLoading, setIsLoading] = useState(false);
   const [alerta, setAlerta] = useState("");
   
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
+const fetchUserType = async () => {
+      try {
+        const response = await api.get(
+          "https://vps55372.publiccloud.com.br/api/profile",
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        const tipo = response?.data?.data?.userType;
+        setUserType(tipo);
+      } catch (error) {
+        console.error("Erro ao buscar tipo de usuário:", error);
+      }
+    fetchUserType();
 
+    };
   // Buscar categorias ao carregar a página
+
   useEffect(() => {
     const fetchCategorias = async () => {
       try {
@@ -129,7 +145,7 @@ function CadastroPecas() {
         }
       );
       alert("Peça cadastrada com sucesso!");
-      navigate("/pecas")
+      navigate("/PecasRouter")
     } catch (error) {
       console.error("Erro ao cadastrar peça:", error);
     
@@ -173,10 +189,9 @@ function CadastroPecas() {
         </button>
       )}
 
-      {/* Fundo translúcido e barra lateral */}
       {menuOpen && (
         <div
-          onClick={() => setMenuOpen(false)} // Fecha o menu ao clicar fora
+          onClick={() => setMenuOpen(false)}
           className="fixed inset-0 bg-black bg-opacity-50 z-30"
         />
       )}
@@ -203,17 +218,21 @@ function CadastroPecas() {
         </button>
         <button
           className="p-4 hover:bg-gray-700 text-left w-full"
-          onClick={() => navigate("/pecas")}
+          onClick={() => navigate("/PecasRouter")}
         >
           Peças
         </button>
-        <button
-          className="p-4 hover:bg-gray-700 text-left w-full"
-          onClick={() => navigate("/pecasVinculadas")}
-        >
-          Peças Vinculadas
-        </button>
+
+        {userType === "fornecedor" && (
+          <button
+            className="p-4 hover:bg-gray-700 text-left w-full"
+            onClick={() => navigate("/pecasVinculadas")}
+          >
+            Peças Vinculadas
+          </button>
+        )}
       </aside>
+
       <h1 className="text-2xl font-bold mb-6 text-center">Cadastro de Peças</h1>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -347,7 +366,7 @@ function CadastroPecas() {
         </div>
         <div className="mt-4 text-center">
           <a
-            href="/pecas"
+            href="/PecasRouter"
             className="text-sm text-gray-500 hover:text-gray-700"
           >
             Voltar

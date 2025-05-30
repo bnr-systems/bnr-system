@@ -18,6 +18,8 @@ function CadastroUnidades() {
   const [municipios, setMunicipios] = useState([]);
   const [menuOpen, setMenuOpen] = useState(false); // Controle do estado da barra lateral
   const [isLoading, setIsLoading] = useState(false);
+    const [userType, setUserType] = useState([]);
+
   const [error, setError] = useState({
     general: "",
     cnpj: "",
@@ -29,6 +31,21 @@ function CadastroUnidades() {
   const navigate = useNavigate();
 
   const estadoSelecionado = watch("estado_id");
+
+  const fetchUserType = async () => {
+      try {
+        const response = await api.get(
+          "https://vps55372.publiccloud.com.br/api/profile",
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        const tipo = response?.data?.data?.userType;
+        setUserType(tipo);
+      } catch (error) {
+        console.error("Erro ao buscar tipo de usuário:", error);
+      }
+    fetchUserType();
+
+    };
 
   const validateCNPJ = (value) => {
     const unformattedCNPJ = value.replace(/\D/g, ""); // Remove caracteres não numéricos
@@ -193,7 +210,6 @@ function CadastroUnidades() {
 
   return (
     <main className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      {/* Botão para abrir o menu */}
       {!menuOpen && (
         <button
           onClick={() => setMenuOpen(true)}
@@ -203,10 +219,9 @@ function CadastroUnidades() {
         </button>
       )}
 
-      {/* Fundo translúcido e barra lateral */}
       {menuOpen && (
         <div
-          onClick={() => setMenuOpen(false)} // Fecha o menu ao clicar fora
+          onClick={() => setMenuOpen(false)}
           className="fixed inset-0 bg-black bg-opacity-50 z-30"
         />
       )}
@@ -233,17 +248,21 @@ function CadastroUnidades() {
         </button>
         <button
           className="p-4 hover:bg-gray-700 text-left w-full"
-          onClick={() => navigate("/pecas")}
+          onClick={() => navigate("/PecasRouter")}
         >
           Peças
         </button>
-        <button
-          className="p-4 hover:bg-gray-700 text-left w-full"
-          onClick={() => navigate("/pecasVinculadas")}
-        >
-          Peças Vinculadas
-        </button>
+
+        {userType === "fornecedor" && (
+          <button
+            className="p-4 hover:bg-gray-700 text-left w-full"
+            onClick={() => navigate("/pecasVinculadas")}
+          >
+            Peças Vinculadas
+          </button>
+        )}
       </aside>
+
 
       <div className="flex-1 p-8 bg-gray-100 overflow-y-auto rounded-md shadow-xl">
         <h1 className="text-2xl text-gray-900 text-center font-bold mb-6">

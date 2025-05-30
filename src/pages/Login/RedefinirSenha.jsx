@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import axios from "axios";
+import { useNavigate} from "react-router-dom";
+import api from "/src/api/api";
 import eyeOn from "/src/assets/images/eye.svg";
 import eyeOff from "/src/assets/images/eye-off.svg";
 
@@ -14,11 +14,10 @@ function RedefinirSenha() {
   const [sucesso, setSucesso] = useState(false);
   const [validando, setValidando] = useState(false);
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
 
-  const token = searchParams.get("token");
+   const token = localStorage.getItem("token");
+ 
 
-  // Validações individuais
   const validarSenha = (senha) => {
     const erros = [];
     if (senha.length < 8) {
@@ -50,8 +49,8 @@ function RedefinirSenha() {
 
     try {
       setValidando(true);
-      const response = await axios.post(
-        "https://vps55372.publiccloud.com.br/api/reset-password",
+      const response = await api.post(
+        "/reset-password",
         { token, senha: novaSenha }
       );
 
@@ -112,14 +111,14 @@ function RedefinirSenha() {
                   value={novaSenha}
                   onChange={(e) => {
                     setNovaSenha(e.target.value);
-                    setErrosSenha([]); // Limpa mensagens enquanto o usuário digita
+                    setErrosSenha([]); 
                   }}
                   className="border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#FCA311]"
                   required
                 />
                 <img
                   src={senhaVisivel ? eyeOn : eyeOff}
-                  alt="Toggle Password Visibility"
+                  alt=""
                   className="absolute top-9 right-3 cursor-pointer w-5 h-5"
                   onClick={() => setSenhaVisivel(!senhaVisivel)}
                 />
@@ -141,7 +140,7 @@ function RedefinirSenha() {
                 />
                 <img
                   src={confirmarSenhaVisivel ? eyeOn : eyeOff}
-                  alt="Toggle Password Visibility"
+                  alt=" "
                   className="absolute top-9 right-3 cursor-pointer w-5 h-5"
                   onClick={() =>
                     setConfirmarSenhaVisivel(!confirmarSenhaVisivel)

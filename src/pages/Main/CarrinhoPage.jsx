@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import api from "/src/api/api";
+import iconMenu from "/src/assets/images/icon-menu.svg";
 import { useNavigate } from "react-router-dom";
 import { useCarrinho } from "../../context/CarrinhoContext";
 import { ShoppingCart, ArrowLeft, Trash2, Send, Check } from "lucide-react";
@@ -8,8 +9,25 @@ const CarrinhoPage = () => {
   const navigate = useNavigate();
   const { carrinho, removerDoCarrinho, limparCarrinho } = useCarrinho();
   const [contatoEnviado, setContatoEnviado] = useState(false);
+    const [menuOpen, setMenuOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [userType, setUserType] = useState([]);
 
+
+  const fetchUserType = async () => {
+      try {
+        const response = await api.get(
+          "https://vps55372.publiccloud.com.br/api/profile",
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        const tipo = response?.data?.data?.userType;
+        setUserType(tipo);
+      } catch (error) {
+        console.error("Erro ao buscar tipo de usuário:", error);
+      }
+    fetchUserType();
+
+    };
   const handleSolicitacao = async () => {
     try {
       setIsLoading(true);
@@ -62,6 +80,59 @@ const CarrinhoPage = () => {
   if (contatoEnviado) {
     return (
       <div className="max-w-3xl mx-auto p-8 bg-white rounded-2xl shadow-xl mt-10">
+        {!menuOpen && (
+        <button
+          onClick={() => setMenuOpen(true)}
+          className="absolute top-4 left-4 z-50 p-2 rounded text-white"
+        >
+          <img src={iconMenu} alt="Menu" className="w-6 h-6" />
+        </button>
+      )}
+
+      {menuOpen && (
+        <div
+          onClick={() => setMenuOpen(false)}
+          className="fixed inset-0 bg-black bg-opacity-50 z-30"
+        />
+      )}
+
+      <aside
+        className={`fixed top-0 left-0 h-full bg-gray-800 text-white transition-transform ease-in-out duration-500 z-40 ${
+          menuOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        <div className="p-4 font-bold text-lg border-b border-gray-700 flex justify-between items-center">
+          <span>Menu</span>
+          <button
+            onClick={() => setMenuOpen(false)}
+            className="text-white hover:text-gray-300"
+          >
+            ✕
+          </button>
+        </div>
+        <button
+          className="p-4 hover:bg-gray-700 text-left w-full"
+          onClick={() => navigate("/unidades")}
+        >
+          Unidades
+        </button>
+        <button
+          className="p-4 hover:bg-gray-700 text-left w-full"
+          onClick={() => navigate("/PecasRouter")}
+        >
+          Peças
+        </button>
+
+        {userType === "fornecedor" && (
+          <button
+            className="p-4 hover:bg-gray-700 text-left w-full"
+            onClick={() => navigate("/pecasVinculadas")}
+          >
+            Peças Vinculadas
+          </button>
+        )}
+      </aside>
+
         <div className="flex flex-col items-center text-center">
           <div className="bg-green-100 p-4 rounded-full mb-4">
             <Check size={48} className="text-green-600" />
@@ -76,7 +147,7 @@ const CarrinhoPage = () => {
             Se preferir, ligue para: (11) XXXX-XXXX
           </p>
           <button
-            onClick={() => navigate("/pecas")}
+            onClick={() => navigate("/PecasRouter")}
             className="mt-8 px-6 py-3 bg-blue-600 text-white rounded-full font-semibold hover:bg-blue-700 transition-all flex items-center gap-2 shadow"
           >
             <ArrowLeft size={18} />
@@ -89,9 +160,62 @@ const CarrinhoPage = () => {
 
   return (
     <div className="max-w-5xl mx-auto p-4 sm:p-6 md:p-10 bg-white rounded-2xl shadow-lg mt-10 w-full">
+      {!menuOpen && (
+        <button
+          onClick={() => setMenuOpen(true)}
+          className="absolute top-4 left-4 z-50 p-2 rounded text-white"
+        >
+          <img src={iconMenu} alt="Menu" className="w-6 h-6" />
+        </button>
+      )}
+
+      {menuOpen && (
+        <div
+          onClick={() => setMenuOpen(false)}
+          className="fixed inset-0 bg-black bg-opacity-50 z-30"
+        />
+      )}
+
+      <aside
+        className={`fixed top-0 left-0 h-full bg-gray-800 text-white transition-transform ease-in-out duration-500 z-40 ${
+          menuOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        <div className="p-4 font-bold text-lg border-b border-gray-700 flex justify-between items-center">
+          <span>Menu</span>
+          <button
+            onClick={() => setMenuOpen(false)}
+            className="text-white hover:text-gray-300"
+          >
+            ✕
+          </button>
+        </div>
+        <button
+          className="p-4 hover:bg-gray-700 text-left w-full"
+          onClick={() => navigate("/unidades")}
+        >
+          Unidades
+        </button>
+        <button
+          className="p-4 hover:bg-gray-700 text-left w-full"
+          onClick={() => navigate("/PecasRouter")}
+        >
+          Peças
+        </button>
+
+        {userType === "fornecedor" && (
+          <button
+            className="p-4 hover:bg-gray-700 text-left w-full"
+            onClick={() => navigate("/pecasVinculadas")}
+          >
+            Peças Vinculadas
+          </button>
+        )}
+      </aside>
+
   <div className="mb-6 sm:mb-8 text-center sm:text-left">
     <button
-      onClick={() => navigate("/pecas")}
+      onClick={() => navigate("/PecasRouter")}
       className="flex items-center text-blue-600 hover:text-blue-800 font-medium transition-colors gap-1"
     >
       <ArrowLeft size={18} />
@@ -104,7 +228,7 @@ const CarrinhoPage = () => {
       <ShoppingCart size={64} className="text-gray-300 mb-4" />
       <p className="text-gray-600 text-xl mb-4">Seu carrinho está vazio.</p>
       <button
-        onClick={() => navigate("/pecas")}
+        onClick={() => navigate("/PecasRouter")}
         className="px-6 py-3 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-all shadow"
       >
         Adicionar Peças

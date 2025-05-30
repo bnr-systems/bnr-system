@@ -23,9 +23,25 @@ function EdicaoUnidade() {
   const [originalData, setOriginalData] = useState(null); // Armazena os dados originais
   const [error, setError] = useState(null);
   const [alerta, setAlerta] = useState("");
+    const [userType, setUserType] = useState([]);
+
   const navigate = useNavigate();
   const unidadeId = localStorage.getItem("unidadeId");
 
+  const fetchUserType = async () => {
+      try {
+        const response = await api.get(
+          "https://vps55372.publiccloud.com.br/api/profile",
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        const tipo = response?.data?.data?.userType;
+        setUserType(tipo);
+      } catch (error) {
+        console.error("Erro ao buscar tipo de usuário:", error);
+      }
+    fetchUserType();
+
+    };
   // Buscar os dados da unidade
   useEffect(() => {
     const fetchUnidade = async () => {
@@ -232,10 +248,9 @@ const onSubmit = async (data) => {
         </button>
       )}
 
-      {/* Fundo translúcido e barra lateral */}
       {menuOpen && (
         <div
-          onClick={() => setMenuOpen(false)} // Fecha o menu ao clicar fora
+          onClick={() => setMenuOpen(false)}
           className="fixed inset-0 bg-black bg-opacity-50 z-30"
         />
       )}
@@ -262,17 +277,21 @@ const onSubmit = async (data) => {
         </button>
         <button
           className="p-4 hover:bg-gray-700 text-left w-full"
-          onClick={() => navigate("/pecas")}
+          onClick={() => navigate("/PecasRouter")}
         >
           Peças
         </button>
-        <button
-          className="p-4 hover:bg-gray-700 text-left w-full"
-          onClick={() => navigate("/pecasVinculadas")}
-        >
-          Peças Vinculadas
-        </button>
+
+        {userType === "fornecedor" && (
+          <button
+            className="p-4 hover:bg-gray-700 text-left w-full"
+            onClick={() => navigate("/pecasVinculadas")}
+          >
+            Peças Vinculadas
+          </button>
+        )}
       </aside>
+
       <h1 className="text-xl font-bold mb-6 text-center">Editar Unidade</h1>
       {loading && <p>Carregando...</p>}
       {error && <p className="text-red-500">{error}</p>}
