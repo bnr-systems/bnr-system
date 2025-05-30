@@ -33,6 +33,13 @@ const PecasVinculadas = () => {
     fetchUserType();
 
     };
+
+    useEffect(() => {
+      if (token) {
+        fetchUserType();
+      }
+    }, [token]);
+    
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);

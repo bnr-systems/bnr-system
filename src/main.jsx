@@ -20,6 +20,8 @@ import Perfil from "./pages/Perfil/Perfil";
 import CarrinhoPage from "./pages/Main/CarrinhoPage";
 import PecasRouter from "./pages/Main/PecasRouter";
 import { CarrinhoProvider } from "./context/CarrinhoContext";
+import { PerfilProvider } from "./context/PerfilContext";
+import { PecasProvider } from "./context/PecasContext";
 import PecasFornecedor from "./pages/Main/PecasFornecedor";
 
 const router = createBrowserRouter([
@@ -100,8 +102,12 @@ const router = createBrowserRouter([
 ]);
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <CarrinhoProvider>
-      <RouterProvider router={router} />
-    </CarrinhoProvider>
+    <PerfilProvider>
+      <PecasProvider>
+        <CarrinhoProvider>
+          <RouterProvider router={router} />
+        </CarrinhoProvider>
+      </PecasProvider>
+    </PerfilProvider>
   </StrictMode>
 );

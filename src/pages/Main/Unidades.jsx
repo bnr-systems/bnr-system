@@ -29,20 +29,24 @@ function Unidades() {
     }
   }, [navigate]);
 
+useEffect(() => {
   const fetchUserType = async () => {
-      try {
-        const response = await api.get(
-          "https://vps55372.publiccloud.com.br/api/profile",
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        const tipo = response?.data?.data?.userType;
-        setUserType(tipo);
-      } catch (error) {
-        console.error("Erro ao buscar tipo de usuário:", error);
-      }
-    fetchUserType();
+    try {
+      const response = await api.get(
+        "https://vps55372.publiccloud.com.br/api/profile",
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      const tipo = response?.data?.data?.userType;
+      setUserType(tipo);
+    } catch (error) {
+      console.error("Erro ao buscar tipo de usuário:", error);
+    }
+  };
 
-    };
+  if (token) {
+    fetchUserType();  
+  }
+}, [token]); 
 
 
   const fetchUnidades = async () => {
