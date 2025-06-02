@@ -19,6 +19,7 @@ import PecasVinculadas from "./pages/Main/PecasVinculadas";
 import Perfil from "./pages/Perfil/Perfil";
 import CarrinhoPage from "./pages/Main/CarrinhoPage";
 import PecasRouter from "./pages/Main/PecasRouter";
+import { AuthProvider } from "./context/AuthContext";
 import { CarrinhoProvider } from "./context/CarrinhoContext";
 import { PerfilProvider } from "./context/PerfilContext";
 import { PecasProvider } from "./context/PecasContext";
@@ -102,6 +103,7 @@ const router = createBrowserRouter([
 ]);
 createRoot(document.getElementById("root")).render(
   <StrictMode>
+    <AuthProvider>
     <PerfilProvider>
       <PecasProvider>
         <CarrinhoProvider>
@@ -109,5 +111,6 @@ createRoot(document.getElementById("root")).render(
         </CarrinhoProvider>
       </PecasProvider>
     </PerfilProvider>
+    </AuthProvider>
   </StrictMode>
 );

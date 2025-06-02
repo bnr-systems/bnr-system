@@ -375,7 +375,7 @@ const PecasFornecedor = () => {
                       className="border border-gray-300 p-4 bg-gray-100"
                     >
                       <img
-                        src={`https://vps55372.publiccloud.com.br/storage/${peca.foto}`}
+                        src={`https://vps55372.publiccloud.com.br/${peca.foto}`}
                         alt={peca.nome_fantasia}
                         className="md:max-w-[600px] md:max-h-[600px] h-auto w-auto mx-auto sm:max-w-[400px] sm:max-h-[400px]" 
                       />

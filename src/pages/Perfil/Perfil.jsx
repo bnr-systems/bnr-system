@@ -1,13 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { usePerfil } from "/src/context/PerfilContext"; // ajuste o caminho conforme necessário
+import { usePerfil } from "/src/context/PerfilContext"; 
 import iconMenu from "/src/assets/images/icon-menu.svg";
 import userIcon from "/src/assets/images/user-icon.png";
+import { useAuth } from "/src/context/AuthContext"; 
+
 
 function Perfil() {
     const navigate = useNavigate();
     const { user, loading, error, refreshProfile } = usePerfil();
+    const { user: authUser, token } = useAuth();
     const [menuOpen, setMenuOpen] = useState(false);
+
+    useEffect(() => {
+  if (!authUser) {
+    navigate("/login");
+  }
+}, [authUser]);
 
     return (
         <div className="container mx-auto p-4">

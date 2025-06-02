@@ -3,10 +3,11 @@ import { useNavigate } from "react-router-dom";
 import validator from "validator";
 import eyeOn from "/src/assets/images/eye.svg";
 import eyeOff from "/src/assets/images/eye-off.svg";
-import api from "/src/api/api";
+import { useAuth } from "/src/context/AuthContext";
 
 function Login() {
   const navigate = useNavigate();
+  const { login } = useAuth(); 
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [formErrors, setFormErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
@@ -41,52 +42,20 @@ function Login() {
     return Object.keys(errors).length === 0;
   };
 
-  const loginUser = async () => {
+    const loginUser = async () => {
     if (!validateForm()) return;
 
     setLoading(true);
     try {
-      const response = await api.post("/login", {
-        email: formData.email,
-        password: formData.password,
-      });
-
-      const { id, token, user } = response.data;
-      const existingUserId = localStorage.getItem("id");
-
-      if (existingUserId && existingUserId !== id.toString()) {
-        localStorage.clear();
-      }
-
-      localStorage.setItem("id", id);
-      localStorage.setItem("token", token);
-
-      if (user) {
-        localStorage.setItem("user", JSON.stringify(user));
-      } else {
-        try {
-          const profileResponse = await api.get("/profile", {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          localStorage.setItem("user", JSON.stringify(profileResponse.data.data));
-        } catch (error) {
-          console.error("Erro ao buscar perfil:", error);
-        }
-      }
-
-      window.dispatchEvent(new Event("userUpdated"));
+      await login(formData.email, formData.password); // ✅ Usa login do contexto
       navigate("/Unidades", { state: { email: formData.email } });
     } catch (error) {
-      if (error.response) {
-        if (error.response.status === 403) {
-          setApiError("Usuário não confirmado. Por favor, verifique seu e-mail.");
-        } else if (error.response.status === 401) {
-          setApiError("Usuário não registrado. Tente novamente.");
-        } else {
-          setApiError("E-mail ou senha incorretos");
-        }
+      if (error.response?.status === 403) {
+        setApiError("Usuário não confirmado. Verifique seu e-mail.");
+      } else if (error.response?.status === 401) {
+        setApiError("Usuário não registrado. Tente novamente.");
       } else {
-        setApiError("Erro no servidor. Atualize a página e tente novamente.");
+        setApiError("E-mail ou senha incorretos.");
       }
     } finally {
       setLoading(false);

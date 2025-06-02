@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import iconMenu from "/src/assets/images/icon-menu.svg";
 import api from "/src/api/api";
+import { useAuth } from "/src/context/AuthContext";
+
 
 function Unidades() {
   const [unidades, setUnidades] = useState([]); // Estado para armazenar as unidades
@@ -20,45 +22,32 @@ function Unidades() {
   
   const navigate = useNavigate();
 
-  const token = localStorage.getItem("token");
+const { user, isAuthenticated, isLoading, token } = useAuth();
 
-  useEffect(() => {
-    if (!token) {
-      alert("Faça o login primeiro!");
-      navigate("/login"); 
-    }
-  }, [navigate]);
+ useEffect(() => {
+  if (!isLoading && !isAuthenticated) {
+    alert("Faça o login primeiro!");
+    navigate("/login"); 
+  }
+}, [isAuthenticated, isLoading, navigate]);
 
 useEffect(() => {
-  const fetchUserType = async () => {
-    try {
-      const response = await api.get(
-        "https://vps55372.publiccloud.com.br/api/profile",
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      const tipo = response?.data?.data?.userType;
-      setUserType(tipo);
-    } catch (error) {
-      console.error("Erro ao buscar tipo de usuário:", error);
-    }
-  };
-
-  if (token) {
-    fetchUserType();  
+  if (user) {
+    setUserType(user.userType);
   }
-}, [token]); 
+}, [user]); 
 
 
   const fetchUnidades = async () => {
     try {
-      const userId = localStorage.getItem("id"); // Leia userId aqui
-      if (!userId) {
-        throw new Error("Usuário não está logado.");
-      }
+      const userId = user?.id;
+      if (!userId || !token) {
+      throw new Error("Usuário não está logado.");
+    }
 
       const response = await api.get(`/unidades/user/${userId}`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -78,8 +67,10 @@ useEffect(() => {
   };
 
   useEffect(() => {
+  if (user && token) {
     fetchUnidades();
-  }, []);
+  }
+}, [user, token]);
   const totalPages = Math.ceil(filteredUnidades.length / itemsPerPage);
 
 
