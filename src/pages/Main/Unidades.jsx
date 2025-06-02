@@ -26,7 +26,6 @@ const { user, isAuthenticated, isLoading, token } = useAuth();
 
  useEffect(() => {
   if (!isLoading && !isAuthenticated) {
-    alert("Faça o login primeiro!");
     navigate("/login"); 
   }
 }, [isAuthenticated, isLoading, navigate]);
