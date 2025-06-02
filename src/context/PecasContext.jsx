@@ -1,11 +1,10 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { usePerfil } from '/src/context/PerfilContext'; // assumindo que você já tem o PerfilContext
+import { usePerfil } from '/src/context/PerfilContext'; // se ainda estiver usando isso
+import { useAuth } from '/src/context/AuthContext'; // agora usando o useAuth
 import api from '/src/api/api';
 
-// Criar o contexto
 const PecasContext = createContext();
 
-// Hook personalizado para usar o contexto
 export const usePecas = () => {
   const context = useContext(PecasContext);
   if (!context) {
@@ -14,18 +13,15 @@ export const usePecas = () => {
   return context;
 };
 
-// Provider do contexto
 export const PecasProvider = ({ children }) => {
-  const { user } = usePerfil(); // pega o usuário do PerfilContext
+  const { token, user } = useAuth(); // pegando token e usuário do AuthContext
   const [userType, setUserType] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [pecas, setPecas] = useState([]);
   const [pecasLoading, setPecasLoading] = useState(false);
 
-  // Função para determinar o tipo de usuário
   const determineUserType = async () => {
-    const token = localStorage.getItem("token");
     if (!token) {
       setLoading(false);
       setError("Token não encontrado");
@@ -35,23 +31,20 @@ export const PecasProvider = ({ children }) => {
     try {
       setLoading(true);
       setError(null);
-      
-      // Se já temos o usuário do PerfilContext, usa ele
+
       if (user && user.userType) {
         setUserType(user.userType);
         setLoading(false);
         return;
       }
 
-      // Caso contrário, busca o tipo de usuário
       const response = await api.get(
         "https://vps55372.publiccloud.com.br/api/profile",
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      
+
       const fetchedUserType = response.data?.data?.userType;
       setUserType(fetchedUserType);
-      
     } catch (error) {
       console.error("Erro ao obter tipo de usuário:", error);
       setError("Erro ao carregar tipo de usuário");
@@ -60,23 +53,20 @@ export const PecasProvider = ({ children }) => {
     }
   };
 
-  // Função para buscar peças baseado no tipo de usuário
   const fetchPecas = async () => {
-    const token = localStorage.getItem("token");
     if (!token || !userType) return;
 
     try {
       setPecasLoading(true);
-      
-      // Endpoint diferente baseado no tipo de usuário
-      const endpoint = userType === "fornecedor" 
+
+      const endpoint = userType === "fornecedor"
         ? "https://vps55372.publiccloud.com.br/api/pecas/fornecedor"
         : "https://vps55372.publiccloud.com.br/api/pecas/oficina";
-        
+
       const response = await api.get(endpoint, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      
+
       setPecas(response.data?.data || []);
     } catch (error) {
       console.error("Erro ao buscar peças:", error);
@@ -86,9 +76,7 @@ export const PecasProvider = ({ children }) => {
     }
   };
 
-  // Função para adicionar peça (para fornecedores)
   const addPeca = async (pecaData) => {
-    const token = localStorage.getItem("token");
     if (!token) throw new Error("Token não encontrado");
 
     try {
@@ -97,8 +85,7 @@ export const PecasProvider = ({ children }) => {
         pecaData,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      
-      // Atualizar a lista local
+
       setPecas(prev => [...prev, response.data.data]);
       return response.data;
     } catch (error) {
@@ -107,9 +94,7 @@ export const PecasProvider = ({ children }) => {
     }
   };
 
-  // Função para atualizar peça
   const updatePeca = async (pecaId, pecaData) => {
-    const token = localStorage.getItem("token");
     if (!token) throw new Error("Token não encontrado");
 
     try {
@@ -118,9 +103,8 @@ export const PecasProvider = ({ children }) => {
         pecaData,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      
-      // Atualizar a lista local
-      setPecas(prev => prev.map(peca => 
+
+      setPecas(prev => prev.map(peca =>
         peca.id === pecaId ? response.data.data : peca
       ));
       return response.data;
@@ -130,9 +114,7 @@ export const PecasProvider = ({ children }) => {
     }
   };
 
-  // Função para deletar peça
   const deletePeca = async (pecaId) => {
-    const token = localStorage.getItem("token");
     if (!token) throw new Error("Token não encontrado");
 
     try {
@@ -140,8 +122,7 @@ export const PecasProvider = ({ children }) => {
         `https://vps55372.publiccloud.com.br/api/pecas/${pecaId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      
-      // Remover da lista local
+
       setPecas(prev => prev.filter(peca => peca.id !== pecaId));
     } catch (error) {
       console.error("Erro ao deletar peça:", error);
@@ -149,9 +130,7 @@ export const PecasProvider = ({ children }) => {
     }
   };
 
-  // Função para solicitar peça (para oficinas)
   const solicitarPeca = async (pecaId, quantidade) => {
-    const token = localStorage.getItem("token");
     if (!token) throw new Error("Token não encontrado");
 
     try {
@@ -160,7 +139,7 @@ export const PecasProvider = ({ children }) => {
         { pecaId, quantidade },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      
+
       return response.data;
     } catch (error) {
       console.error("Erro ao solicitar peça:", error);
@@ -168,7 +147,6 @@ export const PecasProvider = ({ children }) => {
     }
   };
 
-  // Função para limpar dados
   const clearPecasData = () => {
     setUserType(null);
     setPecas([]);
@@ -176,17 +154,14 @@ export const PecasProvider = ({ children }) => {
     setLoading(false);
   };
 
-  // Função para recarregar tipo de usuário
   const refreshUserType = () => {
     determineUserType();
   };
 
-  // Determinar tipo de usuário quando o contexto é montado ou quando o usuário muda
   useEffect(() => {
     determineUserType();
   }, [user]);
 
-  // Buscar peças quando o tipo de usuário é determinado
   useEffect(() => {
     if (userType) {
       fetchPecas();
@@ -207,7 +182,6 @@ export const PecasProvider = ({ children }) => {
     solicitarPeca,
     clearPecasData,
     refreshUserType,
-    // Funções de conveniência para verificar tipo
     isFornecedor: userType === "fornecedor",
     isOficina: userType === "oficina",
   };

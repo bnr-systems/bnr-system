@@ -1,10 +1,12 @@
 import React, { useState } from "react";
-import { useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import api from "/src/api/api";
+import { useAuth } from "/src/context/AuthContext"; // NOVO
 import eyeOn from "/src/assets/images/eye.svg";
 import eyeOff from "/src/assets/images/eye-off.svg";
 
 function RedefinirSenha() {
+  const { token } = useAuth(); // NOVO
   const [novaSenha, setNovaSenha] = useState("");
   const [confirmarSenha, setConfirmarSenha] = useState("");
   const [senhaVisivel, setSenhaVisivel] = useState(false);
@@ -14,9 +16,6 @@ function RedefinirSenha() {
   const [sucesso, setSucesso] = useState(false);
   const [validando, setValidando] = useState(false);
   const navigate = useNavigate();
-
-   const token = localStorage.getItem("token");
- 
 
   const validarSenha = (senha) => {
     const erros = [];
@@ -111,7 +110,7 @@ function RedefinirSenha() {
                   value={novaSenha}
                   onChange={(e) => {
                     setNovaSenha(e.target.value);
-                    setErrosSenha([]); 
+                    setErrosSenha([]);
                   }}
                   className="border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#FCA311]"
                   required

@@ -1,10 +1,9 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import api from '/src/api/api';
+import { useAuth } from '/src/context/AuthContext'; // NOVO
 
-// Criar o contexto
 const PerfilContext = createContext();
 
-// Hook personalizado para usar o contexto
 export const usePerfil = () => {
   const context = useContext(PerfilContext);
   if (!context) {
@@ -13,15 +12,13 @@ export const usePerfil = () => {
   return context;
 };
 
-// Provider do contexto
 export const PerfilProvider = ({ children }) => {
+  const { token } = useAuth(); // NOVO
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Função para buscar o perfil do usuário
   const fetchUserProfile = async () => {
-    const token = localStorage.getItem("token");
     if (!token) {
       setLoading(false);
       setError("Token não encontrado");
@@ -43,12 +40,8 @@ export const PerfilProvider = ({ children }) => {
     }
   };
 
-  // Função para atualizar o perfil
   const updateUserProfile = async (userData) => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      throw new Error("Token não encontrado");
-    }
+    if (!token) throw new Error("Token não encontrado");
 
     try {
       setLoading(true);
@@ -65,22 +58,19 @@ export const PerfilProvider = ({ children }) => {
     }
   };
 
-  // Função para limpar os dados do usuário (logout)
   const clearUserProfile = () => {
     setUser(null);
     setError(null);
     setLoading(false);
   };
 
-  // Função para recarregar o perfil
   const refreshProfile = () => {
     fetchUserProfile();
   };
 
-  // Carregar o perfil automaticamente quando o provider é montado
   useEffect(() => {
     fetchUserProfile();
-  }, []);
+  }, [token]); // reexecuta se o token mudar
 
   const value = {
     user,
