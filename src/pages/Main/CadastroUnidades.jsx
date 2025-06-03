@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Select from "react-select";
+import { useAuth } from "/src/context/AuthContext"; 
 import { FaSpinner } from "react-icons/fa";
 import iconMenu from "/src/assets/images/icon-menu.svg";
 import { useForm } from "react-hook-form";
@@ -14,6 +15,7 @@ function CadastroUnidades() {
     watch,
     formState: { errors },
   } = useForm();
+    const { token } = useAuth(); 
   const [estados, setEstados] = useState([]);
   const [municipios, setMunicipios] = useState([]);
   const [menuOpen, setMenuOpen] = useState(false); // Controle do estado da barra lateral
@@ -157,7 +159,7 @@ function CadastroUnidades() {
       await api.post("/unidades/store", formDataToSend, {
         headers: {
           "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${token}`,
         },
       });
 

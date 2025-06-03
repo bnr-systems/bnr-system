@@ -1,10 +1,13 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import iconMenu from "/src/assets/images/icon-menu.svg";
 import api from "/src/api/api";
+import { useAuth } from "/src/context/AuthContext"; 
 import { useCarrinho } from "/src/context/CarrinhoContext";
 import { useNavigate } from "react-router-dom";
 
 const PecasOficina = () => {
+  const { token } = useAuth(); 
+
   const [pecas, setPecas] = useState([]);
   const [fabricantes, setFabricantes] = useState({});
   const [categorias, setCategorias] = useState([]);
@@ -35,7 +38,6 @@ const PecasOficina = () => {
   const [mostrandoPecasSimilares, setMostrandoPecasSimilares] = useState(false);
 
   const { carrinho, adicionarAoCarrinho } = useCarrinho();
-  const token = localStorage.getItem("token");
   const navigate = useNavigate();
 
   // Função de busca otimizada - só executa quando o usuário clica na lupa

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import iconMenu from "/src/assets/images/icon-menu.svg";
 import api from "/src/api/api";
+import { useAuth } from "/src/context/AuthContext"; 
 import { useNavigate } from "react-router-dom";
 
 const PecasFornecedor = () => {
@@ -19,7 +20,8 @@ const PecasFornecedor = () => {
   const [userType, setUserType] = useState([]);
 
 
-  const token = localStorage.getItem("token");
+  const { token } = useAuth(); 
+
   const navigate = useNavigate();
 
   useEffect(() => {

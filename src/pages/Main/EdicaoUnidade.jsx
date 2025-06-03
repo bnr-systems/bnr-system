@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import iconMenu from "/src/assets/images/icon-menu.svg";
 import Select from "react-select";
+import { useAuth } from "/src/context/AuthContext"; 
 import { useNavigate } from "react-router-dom";
 import api from "/src/api/api";
 
@@ -15,6 +16,7 @@ function EdicaoUnidade() {
     formState: { errors },
   } = useForm();
 
+  const { token } = useAuth(); 
   const [unidade, setUnidade] = useState(null);
   const [estados, setEstados] = useState([]);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -51,7 +53,7 @@ function EdicaoUnidade() {
         setLoading(true);
         const response = await api.get(`/unidades/${unidadeId}`, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${token}`,
           },
         });
         setOriginalData(response.data); 

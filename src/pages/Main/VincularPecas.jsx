@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import api from "/src/api/api";
+import { useAuth } from "/src/context/AuthContext"; 
 import iconMenu from "/src/assets/images/icon-menu.svg";
 import iconCopy from "/src/assets/images/icon-copy.png";
 import iconCheck from "/src/assets/images/icon-check.png";
@@ -30,7 +31,7 @@ const VincularPecas = () => {
   const navigate = useNavigate();
 
   const userId = localStorage.getItem("id");
-  const token = localStorage.getItem("token");
+  const { token } = useAuth(); 
 
 
   const fetchUserType = async () => {

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import api from "/src/api/api";
+import { useAuth } from "/src/context/AuthContext"; 
 import iconMenu from "/src/assets/images/icon-menu.svg";
 import { useNavigate } from "react-router-dom";
 import { useCarrinho } from "../../context/CarrinhoContext";
@@ -7,6 +8,7 @@ import { ShoppingCart, ArrowLeft, Trash2, Send, Check } from "lucide-react";
 
 const CarrinhoPage = () => {
   const navigate = useNavigate();
+  const { token } = useAuth(); 
   const { carrinho, removerDoCarrinho, limparCarrinho } = useCarrinho();
   const [contatoEnviado, setContatoEnviado] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
@@ -57,7 +59,7 @@ const CarrinhoPage = () => {
         "https://vps55372.publiccloud.com.br/api/solicitacao-orcamento",
         body,
         {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "/src/context/AuthContext"; 
 import api from "/src/api/api";
 import iconMenu from "/src/assets/images/icon-menu.svg";
 
@@ -16,7 +17,7 @@ const PecasVinculadas = () => {
   const [userType, setUserType] = useState([]);
 
   const userId = localStorage.getItem("id");
-  const token = localStorage.getItem("token");
+  const { token } = useAuth(); 
   const navigate = useNavigate();
 
   const fetchUserType = async () => {
