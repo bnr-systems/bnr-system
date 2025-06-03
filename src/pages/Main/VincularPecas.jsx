@@ -44,9 +44,11 @@ const VincularPecas = () => {
       } catch (error) {
         console.error("Erro ao buscar tipo de usuário:", error);
       }
-    fetchUserType();
 
     };
+
+    fetchUserType();
+
   useEffect(() => {
     const fetchData = async () => {
       if (!userId || !token) {

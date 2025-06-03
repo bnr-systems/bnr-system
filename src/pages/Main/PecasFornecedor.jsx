@@ -24,24 +24,20 @@ const PecasFornecedor = () => {
 
   useEffect(() => {
   const fetchUserType = async () => {
-    try {
-      const response = await api.get(
-        "https://vps55372.publiccloud.com.br/api/profile",
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      const tipo = response?.data?.data?.userType;
-      setUserType(tipo);
-    } catch (error) {
-      console.error("Erro ao buscar tipo de usuário:", error);
-    }
-  };
+      try {
+        const response = await api.get(
+          "https://vps55372.publiccloud.com.br/api/profile",
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        const tipo = response?.data?.data?.userType;
+        setUserType(tipo);
+      } catch (error) {
+        console.error("Erro ao buscar tipo de usuário:", error);
+      }
 
-  if (token) {
-    fetchUserType();  
-  }
-}, [token]); 
+    };
+    fetchUserType();
 
-  
 
   useEffect(() => {
     const fetchPecas = async () => {

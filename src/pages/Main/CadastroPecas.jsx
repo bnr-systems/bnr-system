@@ -36,9 +36,11 @@ const fetchUserType = async () => {
       } catch (error) {
         console.error("Erro ao buscar tipo de usuário:", error);
       }
-    fetchUserType();
 
     };
+
+    fetchUserType();
+
   // Buscar categorias ao carregar a página
 
   useEffect(() => {

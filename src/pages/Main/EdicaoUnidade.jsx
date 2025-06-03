@@ -39,9 +39,11 @@ function EdicaoUnidade() {
       } catch (error) {
         console.error("Erro ao buscar tipo de usuário:", error);
       }
-    fetchUserType();
 
     };
+
+    fetchUserType();
+
   // Buscar os dados da unidade
   useEffect(() => {
     const fetchUnidade = async () => {

@@ -57,9 +57,10 @@ const PecasOficina = () => {
       } catch (error) {
         console.error("Erro ao buscar tipo de usuário:", error);
       }
-    fetchUserType();
 
     };
+    fetchUserType();
+
   const handleKeyPress = useCallback(
     (e) => {
       if (e.key === "Enter") {

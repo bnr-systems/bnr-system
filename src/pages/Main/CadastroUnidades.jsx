@@ -43,9 +43,10 @@ function CadastroUnidades() {
       } catch (error) {
         console.error("Erro ao buscar tipo de usuário:", error);
       }
-    fetchUserType();
 
     };
+
+    fetchUserType();
 
   const validateCNPJ = (value) => {
     const unformattedCNPJ = value.replace(/\D/g, ""); // Remove caracteres não numéricos

@@ -25,9 +25,11 @@ const CarrinhoPage = () => {
       } catch (error) {
         console.error("Erro ao buscar tipo de usuário:", error);
       }
-    fetchUserType();
 
     };
+
+    fetchUserType();
+
   const handleSolicitacao = async () => {
     try {
       setIsLoading(true);

@@ -30,11 +30,30 @@ const { user, isAuthenticated, isLoading, token } = useAuth();
   }
 }, [isAuthenticated, isLoading, navigate]);
 
+<<<<<<< Updated upstream
 useEffect(() => {
   if (user) {
     setUserType(user.userType);
   }
 }, [user]); 
+=======
+  const fetchUserType = async () => {
+      try {
+        const response = await api.get(
+          "https://vps55372.publiccloud.com.br/api/profile",
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        const tipo = response?.data?.data?.userType;
+        setUserType(tipo);
+      } catch (error) {
+        console.error("Erro ao buscar tipo de usuário:", error);
+      }
+
+    };
+    fetchUserType();
+
+
+>>>>>>> Stashed changes
 
 
   const fetchUnidades = async () => {
@@ -147,6 +166,9 @@ useEffect(() => {
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
+
+  console.log("userType: ", userType);
+  
   return (
     <div className="flex min-h-screen">
       {!menuOpen && (

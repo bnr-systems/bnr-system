@@ -30,16 +30,20 @@ const PecasVinculadas = () => {
       } catch (error) {
         console.error("Erro ao buscar tipo de usuário:", error);
       }
-    fetchUserType();
 
     };
 
+<<<<<<< Updated upstream
     useEffect(() => {
       if (token) {
         fetchUserType();
       }
     }, [token]);
     
+=======
+    fetchUserType();
+
+>>>>>>> Stashed changes
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
