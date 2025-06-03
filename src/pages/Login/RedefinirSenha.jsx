@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "/src/api/api";
-import { useAuth } from "/src/context/AuthContext"; // NOVO
+import { useAuth } from "/src/context/AuthContext"; 
 import eyeOn from "/src/assets/images/eye.svg";
 import eyeOff from "/src/assets/images/eye-off.svg";
 
 function RedefinirSenha() {
-  const { token } = useAuth(); // NOVO
+  const { token } = useAuth(); 
   const [novaSenha, setNovaSenha] = useState("");
   const [confirmarSenha, setConfirmarSenha] = useState("");
   const [senhaVisivel, setSenhaVisivel] = useState(false);
