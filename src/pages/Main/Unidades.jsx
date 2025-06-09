@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import iconMenu from "/src/assets/images/icon-menu.svg";
+import Menu from "/src/components/Menu";
 import api from "/src/api/api";
 import { useAuth } from "/src/context/AuthContext";
 
@@ -10,7 +10,6 @@ function Unidades() {
   const [filteredUnidades, setFilteredUnidades] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [showPopup, setShowPopup] = useState(false); // Controle do pop-up
-  const [menuOpen, setMenuOpen] = useState(false); // Controle do estado da barra lateral
   const [selectedEstado, setSelectedEstado] = useState(""); // Estado para filtro por estado
   const [selectedMunicipio, setSelectedMunicipio] = useState("");
   const [cidadesFiltradas, setCidadesFiltradas] = useState([]);
@@ -18,7 +17,6 @@ function Unidades() {
   const [itemsPerPage, setItemsPerPage] = useState(20); // Itens por página
   const [sortOrder, setSortOrder] = useState("asc"); // Ordenação
   const [totalUnidades, setTotalUnidades] = useState(0);
-  const [userType, setUserType] = useState(null);
   
   const navigate = useNavigate();
 
@@ -29,13 +27,6 @@ const { user, isAuthenticated, isLoading, token } = useAuth();
     navigate("/login"); 
   }
 }, [isAuthenticated, isLoading, navigate]);
-
-useEffect(() => {
-  if (user) {
-    setUserType(user.userType);
-  }
-}, [user]); 
-
 
   const fetchUnidades = async () => {
     try {
@@ -149,59 +140,7 @@ useEffect(() => {
   );
   return (
     <div className="flex min-h-screen">
-      {!menuOpen && (
-        <button
-          onClick={() => setMenuOpen(true)}
-          className="absolute top-4 left-4 z-50 p-2 rounded text-white"
-        >
-          <img src={iconMenu} alt="Menu" className="w-6 h-6" />
-        </button>
-      )}
-
-      {menuOpen && (
-        <div
-          onClick={() => setMenuOpen(false)}
-          className="fixed inset-0 bg-black bg-opacity-50 z-30"
-        />
-      )}
-
-      <aside
-        className={`fixed top-0 left-0 h-full bg-gray-800 text-white transition-transform ease-in-out duration-500 z-40 ${
-          menuOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
-      >
-        <div className="p-4 font-bold text-lg border-b border-gray-700 flex justify-between items-center">
-          <span>Menu</span>
-          <button
-            onClick={() => setMenuOpen(false)}
-            className="text-white hover:text-gray-300"
-          >
-            ✕
-          </button>
-        </div>
-        <button
-          className="p-4 hover:bg-gray-700 text-left w-full"
-          onClick={() => navigate("/unidades")}
-        >
-          Unidades
-        </button>
-        <button
-          className="p-4 hover:bg-gray-700 text-left w-full"
-          onClick={() => navigate("/PecasRouter")}
-        >
-          Peças
-        </button>
-
-        {userType === "fornecedor" && (
-          <button
-            className="p-4 hover:bg-gray-700 text-left w-full"
-            onClick={() => navigate("/pecasVinculadas")}
-          >
-            Peças Vinculadas
-          </button>
-        )}
-      </aside>
-
+      <Menu />
       <main className="flex-1 p-8 bg-gray-100 overflow-y-auto rounded-md shadow-xl lg:w-[90vw]">
         <div className="flex items justify-center sm:justify-end">
           <button

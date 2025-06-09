@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
-import iconMenu from "/src/assets/images/icon-menu.svg";
 import api from "/src/api/api";
+import Menu from "/src/components/Menu";
 import { useAuth } from "/src/context/AuthContext"; 
 import { useCarrinho } from "/src/context/CarrinhoContext";
 import { useNavigate } from "react-router-dom";
@@ -13,11 +13,10 @@ const PecasOficina = () => {
   const [categorias, setCategorias] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const [menuOpen, setMenuOpen] = useState(false);
   const [filtrosAbertos, setFiltrosAbertos] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(16);
-
+  const [currentPage, setCurrentPage] = useState(1); // Paginação
+  const [itemsPerPage, setItemsPerPage] = useState(20); // Itens por página
+    
   const [fabricanteFiltro, setFabricanteFiltro] = useState("");
   const [categoriaFiltro, setCategoriaFiltro] = useState("");
   const [produtoFiltro, setProdutoFiltro] = useState("");
@@ -30,7 +29,6 @@ const PecasOficina = () => {
   const [showContactSuccessPopup, setShowContactSuccessPopup] = useState(false);
   const [showCarrinhoPopup, setShowCarrinhoPopup] = useState(false);
 
-  const [userType, setUserType] = useState("");
   const [showPromotionPopup, setShowPromotionPopup] = useState(false);
   const [pecasPromocao, setPecasPromocao] = useState([]);
   const [pecaPromocaoSelecionada, setPecaPromocaoSelecionada] = useState(null);
@@ -45,23 +43,6 @@ const PecasOficina = () => {
     setTermoBusca(busca.trim());
     setCurrentPage(1); // Reset para a primeira página ao buscar
   }, [busca]);
-
-  // Função para pressionar Enter e realizar a busca
-
-  const fetchUserType = async () => {
-      try {
-        const response = await api.get(
-          "https://vps55372.publiccloud.com.br/api/profile",
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        const tipo = response?.data?.data?.userType;
-        setUserType(tipo);
-      } catch (error) {
-        console.error("Erro ao buscar tipo de usuário:", error);
-      }
-
-    };
-    fetchUserType();
 
   const handleKeyPress = useCallback(
     (e) => {
@@ -145,7 +126,7 @@ const PecasOficina = () => {
     const fetchFabricantes = async () => {
       try {
         const response = await api.get(
-          "https://vps55372.publiccloud.com.br/api/fabricantes",
+          "/fabricantes",
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
@@ -566,61 +547,7 @@ const PecasOficina = () => {
 
   return (
     <div className="bg-gray-100 min-h-screen w-[90vw] md:w-[80vw] lg:w-[75vw]">
-      {/* Botão para abrir o menu */}
-           {!menuOpen && (
-        <button
-          onClick={() => setMenuOpen(true)}
-          className="absolute top-4 left-4 z-50 p-2 rounded text-white"
-        >
-          <img src={iconMenu} alt="Menu" className="w-6 h-6" />
-        </button>
-      )}
-
-      {menuOpen && (
-        <div
-          onClick={() => setMenuOpen(false)}
-          className="fixed inset-0 bg-black bg-opacity-50 z-30"
-        />
-      )}
-
-      <aside
-        className={`fixed top-0 left-0 h-full bg-gray-800 text-white transition-transform ease-in-out duration-500 z-40 ${
-          menuOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
-      >
-        <div className="p-4 font-bold text-lg border-b border-gray-700 flex justify-between items-center">
-          <span>Menu</span>
-          <button
-            onClick={() => setMenuOpen(false)}
-            className="text-white hover:text-gray-300"
-          >
-            ✕
-          </button>
-        </div>
-        <button
-          className="p-4 hover:bg-gray-700 text-left w-full"
-          onClick={() => navigate("/unidades")}
-        >
-          Unidades
-        </button>
-        <button
-          className="p-4 hover:bg-gray-700 text-left w-full"
-          onClick={() => navigate("/PecasRouter")}
-        >
-          Peças
-        </button>
-
-        {userType === "fornecedor" && (
-          <button
-            className="p-4 hover:bg-gray-700 text-left w-full"
-            onClick={() => navigate("/pecasVinculadas")}
-          >
-            Peças Vinculadas
-          </button>
-        )}
-      </aside>
-
-     
+      <Menu />
       <header className="bg-gray-100 py-2 px-4 shadow-md sticky top-0">
         <div className="max-w-screen-xl mx-auto w-full px-4">
           <div className="flex items-center">

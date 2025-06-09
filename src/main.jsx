@@ -18,99 +18,46 @@ import VincularPecas from "./pages/Main/VincularPecas";
 import PecasVinculadas from "./pages/Main/PecasVinculadas";
 import Perfil from "./pages/Perfil/Perfil";
 import CarrinhoPage from "./pages/Main/CarrinhoPage";
-import PecasRouter from "./pages/Main/PecasRouter";
 import { AuthProvider } from "./context/AuthContext";
 import { CarrinhoProvider } from "./context/CarrinhoContext";
 import { PerfilProvider } from "./context/PerfilContext";
-import { PecasProvider } from "./context/PecasContext";
 import PecasFornecedor from "./pages/Main/PecasFornecedor";
+import PecasRouter from "./pages/Main/PecasRouter"; // <-- NOVO
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
     children: [
-      {
-        path: "/",
-        element: <Login />,
-      },
-      {
-        path: "/cadastroUnidades",
-        element: <CadastroUnidades />,
-      },
-      {
-        path: "/vincularPecas",
-        element: <VincularPecas />,
-      },
-      {
-        path: "/pecasVinculadas",
-        element: <PecasVinculadas />,
-      },
-      {
-        path: "/PecasOficina",
-        element: <PecasOficina />,
-      },
-      {
-        path: "/PecasFornecedor",
-        element: <PecasFornecedor />,
-      },
-      {
-        path: "/PecasRouter",
-        element: <PecasRouter />,
-      },
-      {
-        path: "/CarrinhoPage",
-        element: <CarrinhoPage />,
-      },
-      {
-        path: "/cadastroPecas",
-        element: <CadastroPecas />,
-      },
-      {
-        path: "/Cadastro",
-        element: <Cadastro />,
-      },
-      {
-        path: "/RecuperarSenha",
-        element: <RecuperarSenha />,
-      },
-      {
-        path: "/RedefinirSenha",
-        element: <RedefinirSenha />,
-      },
-      {
-        path: "/Confirmacao",
-        element: <Confirmacao />,
-      },
-      {
-        path: "/Unidades",
-        element: <Unidades />,
-      },
-      {
-        path: "/edicaoUnidade",
-        element: <EdicaoUnidade />,
-      },
-      {
-        path: "/Login",
-        element: <Login />,
-      },
-      {
-        path: "/Perfil",
-        element: <Perfil />,
-      },
+      { path: "/", element: <Login /> },
+      { path: "/cadastroUnidades", element: <CadastroUnidades /> },
+      { path: "/vincularPecas", element: <VincularPecas /> },
+      { path: "/pecasVinculadas", element: <PecasVinculadas /> },
+      { path: "/PecasOficina", element: <PecasOficina /> },
+      { path: "/PecasFornecedor", element: <PecasFornecedor /> },
+      { path: "/CarrinhoPage", element: <CarrinhoPage /> },
+      { path: "/cadastroPecas", element: <CadastroPecas /> },
+      { path: "/Cadastro", element: <Cadastro /> },
+      { path: "/RecuperarSenha", element: <RecuperarSenha /> },
+      { path: "/RedefinirSenha", element: <RedefinirSenha /> },
+      { path: "/Confirmacao", element: <Confirmacao /> },
+      { path: "/Unidades", element: <Unidades /> },
+      { path: "/edicaoUnidade", element: <EdicaoUnidade /> },
+      { path: "/Login", element: <Login /> },
+      { path: "/Perfil", element: <Perfil /> },
+      { path: "/PecasRouter", element: <PecasRouter /> }, 
     ],
   },
 ]);
+
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <AuthProvider>
-    <PerfilProvider>
-      <PecasProvider>
+      <PerfilProvider>
         <CarrinhoProvider>
           <RouterProvider router={router} />
         </CarrinhoProvider>
-      </PecasProvider>
-    </PerfilProvider>
+      </PerfilProvider>
     </AuthProvider>
   </StrictMode>
 );

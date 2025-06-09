@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import iconMenu from "/src/assets/images/icon-menu.svg";
+import Menu from "/src/components/Menu";
 import Select from "react-select";
 import { useAuth } from "/src/context/AuthContext"; 
 import { useNavigate } from "react-router-dom";
@@ -19,34 +19,15 @@ function EdicaoUnidade() {
   const { token } = useAuth(); 
   const [unidade, setUnidade] = useState(null);
   const [estados, setEstados] = useState([]);
-  const [menuOpen, setMenuOpen] = useState(false);
   const [municipios, setMunicipios] = useState([]);
   const [loading, setLoading] = useState(false);
   const [originalData, setOriginalData] = useState(null); // Armazena os dados originais
   const [error, setError] = useState(null);
   const [alerta, setAlerta] = useState("");
-    const [userType, setUserType] = useState([]);
 
   const navigate = useNavigate();
   const unidadeId = localStorage.getItem("unidadeId");
 
-  const fetchUserType = async () => {
-      try {
-        const response = await api.get(
-          "https://vps55372.publiccloud.com.br/api/profile",
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        const tipo = response?.data?.data?.userType;
-        setUserType(tipo);
-      } catch (error) {
-        console.error("Erro ao buscar tipo de usuário:", error);
-      }
-
-    };
-
-    fetchUserType();
-
-  // Buscar os dados da unidade
   useEffect(() => {
     const fetchUnidade = async () => {
       try {
@@ -156,7 +137,7 @@ useEffect(() => {
       setLoading(true);
       const response = await api.get(`/unidades/${unidadeId}`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -225,7 +206,7 @@ const onSubmit = async (data) => {
       changedData, // Envia somente os campos alterados
       {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${token}`,
         },
       }
     );
@@ -242,60 +223,7 @@ const onSubmit = async (data) => {
 
   return (
     <div className="p-8 bg-gray-100 min-h-screen w-80 lg:w-[40%]">
-      {/* Botão para abrir o menu */}
-      {!menuOpen && (
-        <button
-          onClick={() => setMenuOpen(true)}
-          className="absolute top-4 left-4 z-50 p-2 rounded text-white"
-        >
-          <img src={iconMenu} alt="Menu" className="w-6 h-6" />
-        </button>
-      )}
-
-      {menuOpen && (
-        <div
-          onClick={() => setMenuOpen(false)}
-          className="fixed inset-0 bg-black bg-opacity-50 z-30"
-        />
-      )}
-
-      <aside
-        className={`fixed top-0 left-0 h-full bg-gray-800 text-white transition-transform ease-in-out duration-500 z-40 ${
-          menuOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
-      >
-        <div className="p-4 font-bold text-lg border-b border-gray-700 flex justify-between items-center">
-          <span>Menu</span>
-          <button
-            onClick={() => setMenuOpen(false)}
-            className="text-white hover:text-gray-300"
-          >
-            ✕
-          </button>
-        </div>
-        <button
-          className="p-4 hover:bg-gray-700 text-left w-full"
-          onClick={() => navigate("/unidades")}
-        >
-          Unidades
-        </button>
-        <button
-          className="p-4 hover:bg-gray-700 text-left w-full"
-          onClick={() => navigate("/PecasRouter")}
-        >
-          Peças
-        </button>
-
-        {userType === "fornecedor" && (
-          <button
-            className="p-4 hover:bg-gray-700 text-left w-full"
-            onClick={() => navigate("/pecasVinculadas")}
-          >
-            Peças Vinculadas
-          </button>
-        )}
-      </aside>
-
+      <Menu />
       <h1 className="text-xl font-bold mb-6 text-center">Editar Unidade</h1>
       {loading && <p>Carregando...</p>}
       {error && <p className="text-red-500">{error}</p>}

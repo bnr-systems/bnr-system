@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Select from "react-select";
 import { useAuth } from "/src/context/AuthContext"; 
 import { FaSpinner } from "react-icons/fa";
-import iconMenu from "/src/assets/images/icon-menu.svg";
+import Menu from "/src/components/Menu";
 import { useForm } from "react-hook-form";
 import api from "/src/api/api";
 
@@ -20,7 +20,6 @@ function CadastroUnidades() {
   const [municipios, setMunicipios] = useState([]);
   const [menuOpen, setMenuOpen] = useState(false); // Controle do estado da barra lateral
   const [isLoading, setIsLoading] = useState(false);
-    const [userType, setUserType] = useState([]);
 
   const [error, setError] = useState({
     general: "",
@@ -33,22 +32,6 @@ function CadastroUnidades() {
   const navigate = useNavigate();
 
   const estadoSelecionado = watch("estado_id");
-
-  const fetchUserType = async () => {
-      try {
-        const response = await api.get(
-          "https://vps55372.publiccloud.com.br/api/profile",
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        const tipo = response?.data?.data?.userType;
-        setUserType(tipo);
-      } catch (error) {
-        console.error("Erro ao buscar tipo de usuário:", error);
-      }
-
-    };
-
-    fetchUserType();
 
   const validateCNPJ = (value) => {
     const unformattedCNPJ = value.replace(/\D/g, ""); // Remove caracteres não numéricos
@@ -213,60 +196,7 @@ function CadastroUnidades() {
 
   return (
     <main className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      {!menuOpen && (
-        <button
-          onClick={() => setMenuOpen(true)}
-          className="absolute top-4 left-4 z-50 p-2 rounded text-white"
-        >
-          <img src={iconMenu} alt="Menu" className="w-6 h-6" />
-        </button>
-      )}
-
-      {menuOpen && (
-        <div
-          onClick={() => setMenuOpen(false)}
-          className="fixed inset-0 bg-black bg-opacity-50 z-30"
-        />
-      )}
-
-      <aside
-        className={`fixed top-0 left-0 h-full bg-gray-800 text-white transition-transform ease-in-out duration-500 z-40 ${
-          menuOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
-      >
-        <div className="p-4 font-bold text-lg border-b border-gray-700 flex justify-between items-center">
-          <span>Menu</span>
-          <button
-            onClick={() => setMenuOpen(false)}
-            className="text-white hover:text-gray-300"
-          >
-            ✕
-          </button>
-        </div>
-        <button
-          className="p-4 hover:bg-gray-700 text-left w-full"
-          onClick={() => navigate("/unidades")}
-        >
-          Unidades
-        </button>
-        <button
-          className="p-4 hover:bg-gray-700 text-left w-full"
-          onClick={() => navigate("/PecasRouter")}
-        >
-          Peças
-        </button>
-
-        {userType === "fornecedor" && (
-          <button
-            className="p-4 hover:bg-gray-700 text-left w-full"
-            onClick={() => navigate("/pecasVinculadas")}
-          >
-            Peças Vinculadas
-          </button>
-        )}
-      </aside>
-
-
+      <Menu />
       <div className="flex-1 p-8 bg-gray-100 overflow-y-auto rounded-md shadow-xl">
         <h1 className="text-2xl text-gray-900 text-center font-bold mb-6">
           Cadastro Unidade

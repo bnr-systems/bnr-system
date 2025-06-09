@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Select from "react-select";
-import iconMenu from "/src/assets/images/icon-menu.svg";
+import Menu from "/src/components/Menu";
 import { FaSpinner } from "react-icons/fa";
+import { useAuth } from "/src/context/AuthContext"; 
 import { useForm } from "react-hook-form";
 import api from "/src/api/api";
 
@@ -13,35 +14,17 @@ function CadastroPecas() {
     setValue,
     formState: { errors },
   } = useForm();
+  const { token } = useAuth(); 
   const [categorias, setCategorias] = useState([]);
   const [fabricantes, setFabricantes] = useState([]);
   const [produtos, setProdutos] = useState([]);
   const [categoriaSelecionada, setCategoriaSelecionada] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false); // Controle do estado da barra lateral
-    const [userType, setUserType] = useState([]);
 
   const [isLoading, setIsLoading] = useState(false);
   const [alerta, setAlerta] = useState("");
   
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
-const fetchUserType = async () => {
-      try {
-        const response = await api.get(
-          "https://vps55372.publiccloud.com.br/api/profile",
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        const tipo = response?.data?.data?.userType;
-        setUserType(tipo);
-      } catch (error) {
-        console.error("Erro ao buscar tipo de usuário:", error);
-      }
-
-    };
-
-    fetchUserType();
-
-  // Buscar categorias ao carregar a página
 
   useEffect(() => {
     const fetchCategorias = async () => {
@@ -182,58 +165,7 @@ const fetchUserType = async () => {
   
   return (
     <div className="container mx-auto p-4">
-      {!menuOpen && (
-        <button
-          onClick={() => setMenuOpen(true)}
-          className="absolute top-4 left-4 z-50 p-2 rounded text-white"
-        >
-          <img src={iconMenu} alt="Menu" className="w-6 h-6" />
-        </button>
-      )}
-
-      {menuOpen && (
-        <div
-          onClick={() => setMenuOpen(false)}
-          className="fixed inset-0 bg-black bg-opacity-50 z-30"
-        />
-      )}
-
-      <aside
-        className={`fixed top-0 left-0 h-full bg-gray-800 text-white transition-transform ease-in-out duration-500 z-40 ${
-          menuOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
-      >
-        <div className="p-4 font-bold text-lg border-b border-gray-700 flex justify-between items-center">
-          <span>Menu</span>
-          <button
-            onClick={() => setMenuOpen(false)}
-            className="text-white hover:text-gray-300"
-          >
-            ✕
-          </button>
-        </div>
-        <button
-          className="p-4 hover:bg-gray-700 text-left w-full"
-          onClick={() => navigate("/unidades")}
-        >
-          Unidades
-        </button>
-        <button
-          className="p-4 hover:bg-gray-700 text-left w-full"
-          onClick={() => navigate("/PecasRouter")}
-        >
-          Peças
-        </button>
-
-        {userType === "fornecedor" && (
-          <button
-            className="p-4 hover:bg-gray-700 text-left w-full"
-            onClick={() => navigate("/pecasVinculadas")}
-          >
-            Peças Vinculadas
-          </button>
-        )}
-      </aside>
+      <Menu />
 
       <h1 className="text-2xl font-bold mb-6 text-center">Cadastro de Peças</h1>
 

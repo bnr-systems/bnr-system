@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import iconMenu from "/src/assets/images/icon-menu.svg";
+import Menu from "/src/components/Menu";
 import api from "/src/api/api";
 import { useAuth } from "/src/context/AuthContext"; 
 import { useNavigate } from "react-router-dom";
@@ -8,48 +8,25 @@ const PecasFornecedor = () => {
   const [pecas, setPecas] = useState([]);
   const [fabricantes, setFabricantes] = useState({});
   const [categorias, setCategorias] = useState([]);
-  const [menuOpen, setMenuOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [fabricanteFiltro, setFabricanteFiltro] = useState("");
   const [busca, setBusca] = useState("");
   const [ordem, setOrdem] = useState("data"); // Controle de ordenação
-  const [itensPorPagina, setItensPorPagina] = useState(10); // Itens por página
-  const [paginaAtual, setPaginaAtual] = useState(1); // Página atual
+  const [itemsPerPage, setItemsPerPage] = useState(10); // Itens por página
+  const [currentPage, setCurrentPage] = useState(1); // Página atual
   const [detalhesPeca, setDetalhesPeca] = useState(null);
   const [detalhesAbertos, setDetalhesAbertos] = useState(null);
-  const [userType, setUserType] = useState([]);
 
 
   const { token } = useAuth(); 
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-  const fetchUserType = async () => {
-    try {
-      const response = await api.get(
-        "https://vps55372.publiccloud.com.br/api/profile",
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      const tipo = response?.data?.data?.userType;
-      setUserType(tipo);
-    } catch (error) {
-      console.error("Erro ao buscar tipo de usuário:", error);
-    }
-  };
-
-  if (token) {
-    fetchUserType();  
-  }
-}, [token]); 
-
-  
-
-  useEffect(() => {
+   useEffect(() => {
     const fetchPecas = async () => {
       try {
         const response = await api.get(
-          "https://vps55372.publiccloud.com.br/api/pecas",
+          "/pecas",
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -58,8 +35,8 @@ const PecasFornecedor = () => {
         if (Array.isArray(pecasData)) {
           setPecas(pecasData);
           // Ajustar para página 1 caso não haja dados
-          if (pecasData.length > 0 && paginaAtual === 0) {
-            setPaginaAtual(1);
+          if (pecasData.length > 0 && currentPage === 0) {
+            setCurrentPage(1);
           }
         } else {
           console.error("Os dados recebidos não são um array.");
@@ -163,11 +140,11 @@ const PecasFornecedor = () => {
   }, [pecas, busca, ordem, fabricanteFiltro]);
 
   const pecasPaginadas = useMemo(() => {
-    const inicio = (paginaAtual - 1) * itensPorPagina;
-    const fim = inicio + itensPorPagina;
+    const inicio = (currentPage - 1) * itemsPerPage;
+    const fim = inicio + itemsPerPage;
     return pecasFiltradas.slice(inicio, fim);
-  }, [pecasFiltradas, paginaAtual, itensPorPagina]);
-  const totalPaginas = Math.ceil(pecasFiltradas.length / itensPorPagina);
+  }, [pecasFiltradas, currentPage, itemsPerPage]);
+  const totalPages = Math.ceil(pecasFiltradas.length / itemsPerPage);
 
   const toggleDetalhes = (id) => {
     setDetalhesAbertos(detalhesAbertos === id ? null : id);
@@ -175,10 +152,10 @@ const PecasFornecedor = () => {
 
   // Garantir que a página atual esteja dentro dos limites
   useEffect(() => {
-    if (paginaAtual > totalPaginas && totalPaginas > 0) {
-      setPaginaAtual(totalPaginas);
+    if (currentPage > totalPages && totalPages > 0) {
+      setCurrentPage(totalPages);
     }
-  }, [paginaAtual, totalPaginas]);
+  }, [currentPage, totalPages]);
 
   const handleVerDetalhes = (peca) => {
     setDetalhesPeca(peca);
@@ -192,67 +169,14 @@ const PecasFornecedor = () => {
     return <p>Carregando peças...</p>;
   }
 
-  console.log("oooiii ",userType)
   return (
     <div className="container mx-auto p-4">
       <h1 className="flex justify-center items-center mb-6  text-2xl font-bold text-gray-900">
         Peças
       </h1>
-      {!menuOpen && (
-        <button
-          onClick={() => setMenuOpen(true)}
-          className="absolute top-4 left-4 z-50 p-2 rounded text-white"
-        >
-          <img src={iconMenu} alt="Menu" className="w-6 h-6" />
-        </button>
-      )}
-
-      {menuOpen && (
-        <div
-          onClick={() => setMenuOpen(false)}
-          className="fixed inset-0 bg-black bg-opacity-50 z-30"
-        />
-      )}
-
-      <aside
-        className={`fixed top-0 left-0 h-full bg-gray-800 text-white transition-transform ease-in-out duration-500 z-40 ${
-          menuOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
-      >
-        <div className="p-4 font-bold text-lg border-b border-gray-700 flex justify-between items-center">
-          <span>Menu</span>
-          <button
-            onClick={() => setMenuOpen(false)}
-            className="text-white hover:text-gray-300"
-          >
-            ✕
-          </button>
-        </div>
-        <button
-          className="p-4 hover:bg-gray-700 text-left w-full"
-          onClick={() => navigate("/unidades")}
-        >
-          Unidades
-        </button>
-        <button
-          className="p-4 hover:bg-gray-700 text-left w-full"
-          onClick={() => navigate("/PecasRouter")}
-        >
-          Peças
-        </button>
-
-        {userType === "fornecedor" && (
-          <button
-            className="p-4 hover:bg-gray-700 text-left w-full"
-            onClick={() => navigate("/pecasVinculadas")}
-          >
-            Peças Vinculadas
-          </button>
-        )}
-      </aside>
+      <Menu />
 
 
-      {/* Botão de Cadastrar Nova Peça */}
       <div className="flex justify-end sm:mb-4">
         <button
           onClick={() => navigate("/cadastroPecas")}
@@ -313,17 +237,17 @@ const PecasFornecedor = () => {
 
         <div>
           <label
-            htmlFor="itensPorPagina"
+            htmlFor="itemsPerPage"
             className="block text-sm font-bold mb-2"
           >
             Itens por Página
           </label>
           <select
-            id="itensPorPagina"
+            id="itemsPerPage"
             className="w-full border border-gray-300 rounded px-3 py-2"
-            value={itensPorPagina}
+            value={itemsPerPage}
             onChange={(e) =>
-              setItensPorPagina(Math.min(Number(e.target.value), 100))
+              setItemsPerPage(Math.min(Number(e.target.value), 100))
             }
           >
             <option value={5}>5</option>
@@ -397,28 +321,79 @@ const PecasFornecedor = () => {
           + Nova Peça
         </button>
       </div>
-      {/* Paginação */}
-      <div className="flex justify-center items-center mt-4 space-x-2">
+      ~{/* Paginação */}
+        <div className="flex justify-center items-center mt-8 space-x-2">
+  {/* Botão de voltar */}
+  <button
+    disabled={currentPage <= 1}
+    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+    className="px-4 py-2 bg-[#14213D]) bg-white text-gray-800 rounded-md disabled:opacity-50 disabled:cursor-not-allowed">
+    &lt;
+  </button>
+
+  {/* Primeira página sempre visível */}
+  <button
+    onClick={() => setCurrentPage(1)}
+    className={`w-10 h-10 flex items-center justify-center rounded ${
+      currentPage === 1 ? "bg-[#14213D] text-white" : "bg-white text-gray-800"
+    }`}
+  >
+    1
+  </button>
+
+  {/* Ellipsis antes das páginas do meio */}
+  {currentPage > 4 && <span className="px-2">...</span>}
+
+  {/* Páginas do meio */}
+  {Array.from({ length: 3 }, (_, i) => {
+    const pageNumber = currentPage <= 3
+      ? i + 2
+      : currentPage >= totalPages - 2
+      ? totalPages - 4 + i
+      : currentPage - 1 + i;
+
+    if (pageNumber > 1 && pageNumber < totalPages) {
+      return (
         <button
-          disabled={paginaAtual <= 1 || totalPaginas === 0}
-          onClick={() => setPaginaAtual((prev) => Math.max(prev - 1, 1))}
-          className="px-4 py-2 relative right-5 bg-[#14213D] text-white font-semibold  rounded disabled:opacity-50"
+          key={pageNumber}
+          onClick={() => setCurrentPage(pageNumber)}
+          className={`w-10 h-10 flex items-center justify-center rounded ${
+            currentPage === pageNumber
+               ? "bg-[#14213D] text-white"
+                    : "bg-white text-gray-800"
+          }`}
         >
-          Anterior
+          {pageNumber}
         </button>
-        <span>
-          Página {totalPaginas === 0 ? 0 : paginaAtual} de {totalPaginas}
-        </span>
-        <button
-          disabled={paginaAtual === totalPaginas || totalPaginas === 0}
-          onClick={() =>
-            setPaginaAtual((prev) => Math.min(prev + 1, totalPaginas))
-          }
-          className="px-4 py-2 relative left-5 bg-[#14213D] text-white font-semibold  rounded disabled:opacity-50"
-        >
-          Próxima
-        </button>
-      </div>
+      );
+    }
+    return null;
+  })}
+
+  {/* Ellipsis depois das páginas do meio */}
+  {currentPage < totalPages - 3 && <span className="px-2">...</span>}
+
+  {/* Última página visível */}
+  {totalPages > 1 && (
+    <button
+      onClick={() => setCurrentPage(totalPages)}
+      className={`w-10 h-10 flex items-center justify-center rounded ${
+        currentPage === totalPages ? "bg-[#14213D] text-white" : "bg-white text-gray-800"
+      }`}
+    >
+      {totalPages}
+    </button>
+  )}
+
+  {/* Botão de avançar */}
+  <button
+    disabled={currentPage >= totalPages}
+    onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+    className="px-4 py-2 bg-white text-gray-800 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
+    >
+    &gt;
+  </button>
+</div>
 
       {/* Modal de Detalhes */}
       {detalhesPeca && (
