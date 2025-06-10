@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo} from 'react';
 import api from '/src/api/api';
 
 const AuthContext = createContext();
@@ -27,6 +27,11 @@ export const AuthProvider = ({ children }) => {
   }
 };
 
+const userPecasRoute = useMemo(() => {
+  if (user?.userType === "fornecedor") return "/PecasFornecedor";
+  if (user?.userType === "oficina") return "/PecasOficina";
+  return "/login";
+}, [user]);
 
   const logout = () => {
     localStorage.removeItem('token');
@@ -65,6 +70,7 @@ export const AuthProvider = ({ children }) => {
       login, 
       logout, 
       isLoading,
+      userPecasRoute,
       token
     }}>
       {children}

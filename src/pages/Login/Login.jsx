@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect} from "react";
 import { useNavigate } from "react-router-dom";
 import validator from "validator";
 import eyeOn from "/src/assets/images/eye.svg";
@@ -7,7 +7,7 @@ import { useAuth } from "/src/context/AuthContext";
 
 function Login() {
   const navigate = useNavigate();
-  const { login } = useAuth(); 
+  const { login, logout, user } = useAuth(); 
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [formErrors, setFormErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
@@ -61,6 +61,10 @@ function Login() {
       setLoading(false);
     }
   };
+
+   useEffect(() => {
+    if (user) logout();
+  }, []);
 
   const toggleShowPassword = () => setShowPassword(!showPassword);
 

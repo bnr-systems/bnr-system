@@ -5,23 +5,15 @@ import { useAuth } from "/src/context/AuthContext";
 
 const PecasRouter = () => {
   const navigate = useNavigate();
-  const { token } = useAuth();
-
-    const { user, isLoading } = useAuth();
+  const { isLoading, userPecasRoute } = useAuth();
 
   useEffect(() => {
-    if (isLoading) return; 
-
-    if (user?.userType === "fornecedor") {
-      navigate("/PecasFornecedor", { replace: true });
-    } else if (user?.userType === "oficina") {
-      navigate("/PecasOficina", { replace: true });
-    } else {
-      navigate("/login", { replace: true });
+    if (!isLoading) {
+      navigate(userPecasRoute, { replace: true });
     }
-  }, [user, isLoading, navigate]);
+  }, [isLoading, userPecasRoute, navigate]);
 
-  return <FaSpinner className="animate-spin mr-2" />
+  return <FaSpinner className="animate-spin mr-2" />;
 };
 
 export default PecasRouter;

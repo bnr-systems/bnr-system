@@ -12,8 +12,9 @@ const Menu = () => {
     <>
      <button
   onClick={() => setMenuOpen(true)}
-  className={`fixed top-4 left-4 z-50 p-2 rounded text-white transition-opacity duration-300 ${
-    menuOpen ? "opacity-0 pointer-events-none" : "opacity-100"
+  className={`absolute top-4 left-4 z-50 p-2 rounded text-white transition-opacity duration-300 ${
+  
+  menuOpen ? "opacity-0 pointer-events-none" : "opacity-100"
   }`}
 >
         <img src={iconMenu} alt="Menu" className="w-6 h-6" />

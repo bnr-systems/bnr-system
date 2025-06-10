@@ -321,7 +321,7 @@ const PecasFornecedor = () => {
           + Nova Peça
         </button>
       </div>
-      ~{/* Paginação */}
+      {/* Paginação */}
         <div className="flex justify-center items-center mt-8 space-x-2">
   {/* Botão de voltar */}
   <button
