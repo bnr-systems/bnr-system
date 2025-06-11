@@ -260,59 +260,53 @@ const PecasFornecedor = () => {
       </div>
 
       {/* Tabela de Peças */}
-      {pecasPaginadas.length === 0 ? (
-        <p>Nenhuma peça encontrada.</p>
-      ) : (
-        <table className="min-w-full border-collapse border border-gray-300">
-          <thead className="bg-gray-200">
-            <tr>
-              <th className="border border-gray-300 px-4 py-2 text-left">
-                Nome
-              </th>
-              <th className="border border-gray-300 px-4 py-2 text-left">
-                Código
-              </th>
-              <th className="border border-gray-300 px-4 py-2 text-left">
-                Fabricante
-              </th>
+{pecasPaginadas.length === 0 ? (
+  <p>Nenhuma peça encontrada.</p>
+) : (
+  <div className="w-full overflow-x-auto">
+    <table className="min-w-full border-collapse border border-gray-300">
+      <thead className="bg-gray-200">
+        <tr>
+          <th className="border border-gray-300 px-4 py-2 text-left">Nome</th>
+          <th className="border border-gray-300 px-4 py-2 text-left">Código</th>
+          <th className="border border-gray-300 px-4 py-2 text-left">Fabricante</th>
+        </tr>
+      </thead>
+      <tbody>
+        {pecasPaginadas.map((peca) => (
+          <React.Fragment key={peca.id}>
+            <tr
+              onClick={() => toggleDetalhes(peca.id)}
+              className="hover:bg-gray-100 cursor-pointer"
+            >
+              <td className="border border-gray-300 px-4 py-2">
+                {peca.nome_fantasia || "-"}
+              </td>
+              <td className="border border-gray-300 px-4 py-2">
+                {peca.codigo}
+              </td>
+              <td className="border border-gray-300 px-4 py-2">
+                {fabricantes[peca.fabricante_id] || "Não Informado"}
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            {pecasPaginadas.map((peca) => (
-              <React.Fragment key={peca.id}>
-                <tr
-                  onClick={() => toggleDetalhes(peca.id)}
-                  className="hover:bg-gray-100 cursor-pointer"
-                >
-                  <td className="border border-gray-300 px-4 py-2">
-                    {peca.nome_fantasia || "-"}
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    {peca.codigo}
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    {fabricantes[peca.fabricante_id] || "Não Informado"}
-                  </td>
-                </tr>
-                {detalhesAbertos === peca.id && peca.foto && (
-                  <tr>
-                    <td
-                      colSpan={3}
-                      className="border border-gray-300 p-4 bg-gray-100"
-                    >
-                      <img
-                        src={`https://vps55372.publiccloud.com.br/${peca.foto}`}
-                        alt={peca.nome_fantasia}
-                        className="md:max-w-[600px] md:max-h-[600px] h-auto w-auto mx-auto sm:max-w-[400px] sm:max-h-[400px]" 
-                      />
-                    </td>
-                  </tr>
-                )}
-              </React.Fragment>
-            ))}
-          </tbody>
-        </table>
-      )}
+            {detalhesAbertos === peca.id && peca.foto && (
+              <tr>
+                <td colSpan={3} className="border border-gray-300 p-4 bg-gray-100">
+                  <img
+                    src={`https://vps55372.publiccloud.com.br/${peca.foto}`}
+                    alt={peca.nome_fantasia}
+                    className="max-w-full h-auto mx-auto md:max-w-[600px] md:max-h-[600px] sm:max-w-[400px] sm:max-h-[400px]"
+                  />
+                </td>
+              </tr>
+            )}
+          </React.Fragment>
+        ))}
+      </tbody>
+    </table>
+  </div>
+)}
+
       <div className="sm:hidden flex justify-center">
         <button
           onClick={() => navigate("/cadastroPecas")}
