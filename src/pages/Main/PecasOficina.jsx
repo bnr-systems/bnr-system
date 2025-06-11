@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import api from "/src/api/api";
 import Menu from "/src/components/Menu";
-import { useAuth } from "/src/context/AuthContext"; 
+import { useAuth } from "/src/context/AuthContext";
 import { useCarrinho } from "/src/context/CarrinhoContext";
 import { useNavigate } from "react-router-dom";
 
 const PecasOficina = () => {
-  const { token } = useAuth(); 
+  const { token, user } = useAuth();
 
   const [pecas, setPecas] = useState([]);
   const [fabricantes, setFabricantes] = useState({});
@@ -16,12 +16,12 @@ const PecasOficina = () => {
   const [filtrosAbertos, setFiltrosAbertos] = useState(false);
   const [currentPage, setCurrentPage] = useState(1); // Paginação
   const [itemsPerPage, setItemsPerPage] = useState(20); // Itens por página
-    
+
   const [fabricanteFiltro, setFabricanteFiltro] = useState("");
   const [categoriaFiltro, setCategoriaFiltro] = useState("");
   const [produtoFiltro, setProdutoFiltro] = useState("");
   const [ordem, setOrdem] = useState("data");
-  const [busca, setBusca] = useState(""); 
+  const [busca, setBusca] = useState("");
   const [termoBusca, setTermoBusca] = useState("");
 
   const [detalhesPeca, setDetalhesPeca] = useState(null);
@@ -53,36 +53,12 @@ const PecasOficina = () => {
     [handleSearchClick]
   );
 
-  // Verificação de tipo de usuário (memoizada)
   useEffect(() => {
-    const fetchUserData = async () => {
-      if (!token) return;
-
-      try {
-        const response = await api.get(
-          "https://vps55372.publiccloud.com.br/api/profile",
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-
-        const tipo = response?.data?.data?.userType;
-
-        if (tipo) {
-          setUserType(tipo);
-
-          if (tipo === "oficina") {
-            fetchPecasPromocao();
-            setShowPromotionPopup(true);
-          }
-        }
-      } catch (error) {
-        console.error("Erro ao buscar dados do usuário:", error);
-      }
-    };
-
-    fetchUserData();
-  }, [token]);
+    if (user?.userType === "oficina") {
+      fetchPecasPromocao();
+      setShowPromotionPopup(true);
+    }
+  }, [user]);
 
   // Carregar peças (memoizada)
   useEffect(() => {
@@ -125,10 +101,9 @@ const PecasOficina = () => {
 
     const fetchFabricantes = async () => {
       try {
-        const response = await api.get(
-          "/fabricantes",
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
+        const response = await api.get("/fabricantes", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
 
         if (
           response.data &&
@@ -402,7 +377,6 @@ const PecasOficina = () => {
       setCurrentIndex((prev) => (prev === 0 ? items.length - 1 : prev - 1));
     };
 
-
     return (
       <div className="relative w-full">
         <div className="overflow-hidden rounded-lg">
@@ -453,7 +427,7 @@ const PecasOficina = () => {
               key={idx}
               onClick={() => setCurrentIndex(idx)}
               className={`mx-1 w-3 h-3 rounded-full ${
-                currentIndex === idx ?"bg-blue-600" : "bg-gray-300"
+                currentIndex === idx ? "bg-blue-600" : "bg-gray-300"
               }`}
             ></button>
           ))}
@@ -465,14 +439,12 @@ const PecasOficina = () => {
   // Componente de Card de Peça - Extraído para melhorar a performance
   // Alterado para estilo horizontal como no Mercado Livre
   const PecaCard = React.memo(({ peca }) => {
-
     const imagemUrl = peca.foto
       ? peca.foto.startsWith("http")
         ? peca.foto
         : `https://vps55372.publiccloud.com.br/${peca.foto}`
       : peca.imagem ||
         "https://dcdn-us.mitiendanube.com/stores/762/826/products/tbm31-783da3b6329b81b93715737641473749-640-0.png";
-        
 
     return (
       <div className="bg-white rounded-lg border border-gray-200 overflow-hidden transition-transform hover:shadow-lg hover:border-blue-300 flex flex-col sm:flex-row">
@@ -484,7 +456,6 @@ const PecasOficina = () => {
             className="w-full h-full object-contain hover:scale-105 transition-transform duration-300"
             loading="lazy"
           />
-
         </div>
 
         {/* Lado direito: Informações */}
@@ -533,8 +504,6 @@ const PecasOficina = () => {
       </div>
     );
   });
-
-  
 
   // Loading state
   if (isLoading) {
@@ -671,7 +640,7 @@ const PecasOficina = () => {
                 >
                   <option value="">Todas</option>
                   {categorias.map((cat) => (
-                    <option key={cat.value} value={cat.label}>
+                    <option key={cat.value} value={cat.value}>
                       {cat.label}
                     </option>
                   ))}
@@ -822,94 +791,104 @@ const PecasOficina = () => {
             <div className="grid grid-cols-1 gap-4">
               <div className="flex flex-col gap-4">
                 {pecasPaginadas.map((peca) => (
-                  <div className="w-full bg-white rounded-lg shadow p-4">
-                    <PecaCard key={peca.id} peca={peca} />
+                  <div
+                    key={peca.id}
+                    className="w-full bg-white rounded-lg shadow p-4"
+                  >
+                    <PecaCard peca={peca} />
                   </div>
                 ))}
               </div>
             </div>
           )}
 
-           {/* Paginação */}
-        <div className="flex justify-center items-center mt-8 space-x-2">
-  {/* Botão de voltar */}
-  <button
-    disabled={currentPage <= 1}
-    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-    className="px-4 py-2 bg-[#14213D]) bg-white text-gray-800 rounded-md disabled:opacity-50 disabled:cursor-not-allowed">
-    &lt;
-  </button>
+          {/* Paginação */}
+          <div className="flex justify-center items-center mt-8 space-x-2">
+            {/* Botão de voltar */}
+            <button
+              disabled={currentPage <= 1}
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              className="px-4 py-2 bg-[#14213D]) bg-white text-gray-800 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              &lt;
+            </button>
 
-  {/* Primeira página sempre visível */}
-  <button
-    onClick={() => setCurrentPage(1)}
-    className={`w-10 h-10 flex items-center justify-center rounded ${
-      currentPage === 1 ? "bg-[#14213D] text-white" : "bg-white text-gray-800"
-    }`}
-  >
-    1
-  </button>
+            {/* Primeira página sempre visível */}
+            <button
+              onClick={() => setCurrentPage(1)}
+              className={`w-10 h-10 flex items-center justify-center rounded ${
+                currentPage === 1
+                  ? "bg-[#14213D] text-white"
+                  : "bg-white text-gray-800"
+              }`}
+            >
+              1
+            </button>
 
-  {/* Ellipsis antes das páginas do meio */}
-  {currentPage > 4 && <span className="px-2">...</span>}
+            {/* Ellipsis antes das páginas do meio */}
+            {currentPage > 4 && <span className="px-2">...</span>}
 
-  {/* Páginas do meio */}
-  {Array.from({ length: 3 }, (_, i) => {
-    const pageNumber = currentPage <= 3
-      ? i + 2
-      : currentPage >= totalPages - 2
-      ? totalPages - 4 + i
-      : currentPage - 1 + i;
+            {/* Páginas do meio */}
+            {Array.from({ length: 3 }, (_, i) => {
+              const pageNumber =
+                currentPage <= 3
+                  ? i + 2
+                  : currentPage >= totalPages - 2
+                  ? totalPages - 4 + i
+                  : currentPage - 1 + i;
 
-    if (pageNumber > 1 && pageNumber < totalPages) {
-      return (
-        <button
-          key={pageNumber}
-          onClick={() => setCurrentPage(pageNumber)}
-          className={`w-10 h-10 flex items-center justify-center rounded ${
-            currentPage === pageNumber
-               ? "bg-[#14213D] text-white"
+              if (pageNumber > 1 && pageNumber < totalPages) {
+                return (
+                  <button
+                    key={pageNumber}
+                    onClick={() => setCurrentPage(pageNumber)}
+                    className={`w-10 h-10 flex items-center justify-center rounded ${
+                      currentPage === pageNumber
+                        ? "bg-[#14213D] text-white"
+                        : "bg-white text-gray-800"
+                    }`}
+                  >
+                    {pageNumber}
+                  </button>
+                );
+              }
+              return null;
+            })}
+
+            {/* Ellipsis depois das páginas do meio */}
+            {currentPage < totalPages - 3 && <span className="px-2">...</span>}
+
+            {/* Última página visível */}
+            {totalPages > 1 && (
+              <button
+                onClick={() => setCurrentPage(totalPages)}
+                className={`w-10 h-10 flex items-center justify-center rounded ${
+                  currentPage === totalPages
+                    ? "bg-[#14213D] text-white"
                     : "bg-white text-gray-800"
-          }`}
-        >
-          {pageNumber}
-        </button>
-      );
-    }
-    return null;
-  })}
+                }`}
+              >
+                {totalPages}
+              </button>
+            )}
 
-  {/* Ellipsis depois das páginas do meio */}
-  {currentPage < totalPages - 3 && <span className="px-2">...</span>}
-
-  {/* Última página visível */}
-  {totalPages > 1 && (
-    <button
-      onClick={() => setCurrentPage(totalPages)}
-      className={`w-10 h-10 flex items-center justify-center rounded ${
-        currentPage === totalPages ? "bg-[#14213D] text-white" : "bg-white text-gray-800"
-      }`}
-    >
-      {totalPages}
-    </button>
-  )}
-
-  {/* Botão de avançar */}
-  <button
-    disabled={currentPage >= totalPages}
-    onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-    className="px-4 py-2 bg-white text-gray-800 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
-    >
-    &gt;
-  </button>
-</div>
+            {/* Botão de avançar */}
+            <button
+              disabled={currentPage >= totalPages}
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+              }
+              className="px-4 py-2 bg-white text-gray-800 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              &gt;
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Modal para detalhes da peça */}
       {detalhesPeca && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-          {console.log("Renderizando modal com detalhesPeca:", detalhesPeca)}
           <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center p-4 border-b">
               <h2 className="text-xl font-bold">Detalhes da Peça</h2>
@@ -932,8 +911,6 @@ const PecasOficina = () => {
                           : `https://vps55372.publiccloud.com.br/${detalhesPeca.foto}`
                         : detalhesPeca.imagem ||
                           "https://dcdn-us.mitiendanube.com/stores/762/826/products/tbm31-783da3b6329b81b93715737641473749-640-0.png"
-
-                          
                     }
                     alt={detalhesPeca.nome_fantasia || "Peça automotiva"}
                     className="w-full h-auto rounded-lg border"
@@ -1008,9 +985,8 @@ const PecasOficina = () => {
         </div>
       )}
 
-
       {/* Modal para promoções (só aparece para oficinas) */}
-      {showPromotionPopup && userType === "oficina" && (
+      {showPromotionPopup && user?.userType === "oficina" && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-lg shadow-xl max-w-lg w-full">
             <div className="flex justify-between items-center p-4 bg-blue-600 text-white rounded-t-lg">
