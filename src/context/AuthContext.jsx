@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, useEffect, useMemo} from 'react';
+// src/context/AuthContext.jsx
+import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import api from '/src/api/api';
 
 const AuthContext = createContext();
@@ -8,37 +9,35 @@ export const AuthProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [token, setToken] = useState(localStorage.getItem('token'));
 
- const login = async (email, password) => {
-  try {
-    const response = await api.post('/login', { email, password });
-    const token = response.data.token;
+  const login = async (email, password) => {
+    try {
+      const response = await api.post('/login', { email, password });
+      const token = response.data.token;
 
-    localStorage.setItem('token', token);
-    setToken(token);
+      localStorage.setItem('token', token);
+      setToken(token);
 
-    const profile = await api.get('/profile', {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    setUser(profile.data.data);
-
-  } catch (error) {
-    logout();
-    throw error;
-  }
-};
-
-const userPecasRoute = useMemo(() => {
-  if (user?.userType === "fornecedor") return "/PecasFornecedor";
-  if (user?.userType === "oficina") return "/PecasOficina";
-  return "/login";
-}, [user]);
+      const profile = await api.get('/profile', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setUser(profile.data.data);
+    } catch (error) {
+      logout(); // limpa estado
+      throw error; // deixa o componente tratar a mensagem
+    }
+  };
 
   const logout = () => {
     localStorage.removeItem('token');
     setToken(null);
     setUser(null);
-    window.location.href = "/login";
   };
+
+  const userPecasRoute = useMemo(() => {
+    if (user?.userType === "fornecedor") return "/PecasFornecedor";
+    if (user?.userType === "oficina") return "/PecasOficina";
+    return "/login";
+  }, [user]);
 
   useEffect(() => {
     const storedToken = localStorage.getItem('token');
@@ -64,14 +63,16 @@ const userPecasRoute = useMemo(() => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ 
-      user, 
-      isAuthenticated: !!user, 
-      login, 
-      logout, 
+    <AuthContext.Provider value={{
+      user,
+      isAuthenticated: !!user,
+      login,
+      logout,
       isLoading,
       userPecasRoute,
-      token
+      token,
+      setUser,
+      setToken
     }}>
       {children}
     </AuthContext.Provider>

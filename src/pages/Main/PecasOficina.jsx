@@ -53,12 +53,7 @@ const PecasOficina = () => {
     [handleSearchClick]
   );
 
-  useEffect(() => {
-    if (user?.userType === "oficina") {
-      fetchPecasPromocao();
-      setShowPromotionPopup(true);
-    }
-  }, [user]);
+  
 
   // Carregar peças (memoizada)
   useEffect(() => {
@@ -94,6 +89,19 @@ const PecasOficina = () => {
 
     fetchPecas();
   }, [token]);
+
+  useEffect(() => {
+    if (!user) return;
+  
+    const popupKey = `popupOficinaExibido-${user.id}`;
+    const popupAlreadyShown = localStorage.getItem(popupKey);
+  
+    if (user.userType === "oficina" && !popupAlreadyShown) {
+      fetchPecasPromocao(); 
+      setShowPromotionPopup(true);
+      localStorage.setItem(popupKey, "true");
+    }
+  }, [user]);
 
   // Carregar fabricantes
   useEffect(() => {
@@ -426,9 +434,8 @@ const PecasOficina = () => {
             <button
               key={idx}
               onClick={() => setCurrentIndex(idx)}
-              className={`mx-1 w-3 h-3 rounded-full ${
-                currentIndex === idx ? "bg-blue-600" : "bg-gray-300"
-              }`}
+              className={`mx-1 w-3 h-3 rounded-full ${currentIndex === idx ? "bg-blue-600" : "bg-gray-300"
+                }`}
             ></button>
           ))}
         </div>
@@ -444,7 +451,7 @@ const PecasOficina = () => {
         ? peca.foto
         : `https://vps55372.publiccloud.com.br/${peca.foto}`
       : peca.imagem ||
-        "https://dcdn-us.mitiendanube.com/stores/762/826/products/tbm31-783da3b6329b81b93715737641473749-640-0.png";
+      "https://dcdn-us.mitiendanube.com/stores/762/826/products/tbm31-783da3b6329b81b93715737641473749-640-0.png";
 
     return (
       <div className="bg-white rounded-lg border border-gray-200 overflow-hidden transition-transform hover:shadow-lg hover:border-blue-300 flex flex-col sm:flex-row">
@@ -816,11 +823,10 @@ const PecasOficina = () => {
             {/* Primeira página sempre visível */}
             <button
               onClick={() => setCurrentPage(1)}
-              className={`w-10 h-10 flex items-center justify-center rounded ${
-                currentPage === 1
+              className={`w-10 h-10 flex items-center justify-center rounded ${currentPage === 1
                   ? "bg-[#14213D] text-white"
                   : "bg-white text-gray-800"
-              }`}
+                }`}
             >
               1
             </button>
@@ -834,19 +840,18 @@ const PecasOficina = () => {
                 currentPage <= 3
                   ? i + 2
                   : currentPage >= totalPages - 2
-                  ? totalPages - 4 + i
-                  : currentPage - 1 + i;
+                    ? totalPages - 4 + i
+                    : currentPage - 1 + i;
 
               if (pageNumber > 1 && pageNumber < totalPages) {
                 return (
                   <button
                     key={pageNumber}
                     onClick={() => setCurrentPage(pageNumber)}
-                    className={`w-10 h-10 flex items-center justify-center rounded ${
-                      currentPage === pageNumber
+                    className={`w-10 h-10 flex items-center justify-center rounded ${currentPage === pageNumber
                         ? "bg-[#14213D] text-white"
                         : "bg-white text-gray-800"
-                    }`}
+                      }`}
                   >
                     {pageNumber}
                   </button>
@@ -862,11 +867,10 @@ const PecasOficina = () => {
             {totalPages > 1 && (
               <button
                 onClick={() => setCurrentPage(totalPages)}
-                className={`w-10 h-10 flex items-center justify-center rounded ${
-                  currentPage === totalPages
+                className={`w-10 h-10 flex items-center justify-center rounded ${currentPage === totalPages
                     ? "bg-[#14213D] text-white"
                     : "bg-white text-gray-800"
-                }`}
+                  }`}
               >
                 {totalPages}
               </button>
@@ -910,7 +914,7 @@ const PecasOficina = () => {
                           ? detalhesPeca.foto
                           : `https://vps55372.publiccloud.com.br/${detalhesPeca.foto}`
                         : detalhesPeca.imagem ||
-                          "https://dcdn-us.mitiendanube.com/stores/762/826/products/tbm31-783da3b6329b81b93715737641473749-640-0.png"
+                        "https://dcdn-us.mitiendanube.com/stores/762/826/products/tbm31-783da3b6329b81b93715737641473749-640-0.png"
                     }
                     alt={detalhesPeca.nome_fantasia || "Peça automotiva"}
                     className="w-full h-auto rounded-lg border"
@@ -987,8 +991,8 @@ const PecasOficina = () => {
 
       {/* Modal para promoções (só aparece para oficinas) */}
       {showPromotionPopup && user?.userType === "oficina" && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-lg w-full">
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-[9999] flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-sm md:max-w-lg">
             <div className="flex justify-between items-center p-4 bg-blue-600 text-white rounded-t-lg">
               <h2 className="text-xl font-bold">
                 Ofertas Especiais para Oficinas
@@ -1002,8 +1006,7 @@ const PecasOficina = () => {
             </div>
             <div className="p-6">
               <p className="text-gray-700 mb-4">
-                Confira estas peças em oferta exclusiva para o seu tipo de
-                negócio!
+                Confira estas peças em oferta exclusiva para o seu tipo de negócio!
               </p>
 
               {pecasPromocao.length > 0 && <Carousel items={pecasPromocao} />}
@@ -1023,7 +1026,7 @@ const PecasOficina = () => {
 
       {/* Popup de confirmação de adição ao carrinho */}
       {showCarrinhoPopup && (
-        <div className="fixed bottom-4 right-4 bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded shadow-lg z-50 animate-fade-in-up">
+        <div className="fixed bottom-4 right-4 bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded shadow-lg z-[9999] animate-fade-in-up">
           <div className="flex items-center">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -1043,6 +1046,7 @@ const PecasOficina = () => {
           </div>
         </div>
       )}
+
     </div>
   );
 };

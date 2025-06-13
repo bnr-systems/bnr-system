@@ -7,7 +7,7 @@ import { useAuth } from "/src/context/AuthContext";
 
 function Login() {
   const navigate = useNavigate();
-  const { login, logout, user } = useAuth(); 
+  const { login, user, logout } = useAuth(); 
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [formErrors, setFormErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
@@ -47,24 +47,26 @@ function Login() {
 
     setLoading(true);
     try {
-      await login(formData.email, formData.password); // ✅ Usa login do contexto
+      await login(formData.email, formData.password); 
       navigate("/Unidades", { state: { email: formData.email } });
     } catch (error) {
-      if (error.response?.status === 403) {
+      if (error.response?.status === 404) {
+        setApiError("Usuário não registrado.");
+      } else if (error.response?.status === 403) {
         setApiError("Usuário não confirmado. Verifique seu e-mail.");
       } else if (error.response?.status === 401) {
-        setApiError("Usuário não registrado. Tente novamente.");
-      } else {
         setApiError("E-mail ou senha incorretos.");
+      } else {
+        setApiError("Erro ao tentar fazer login. Tente novamente mais tarde.");
       }
     } finally {
       setLoading(false);
     }
   };
 
-   useEffect(() => {
+  useEffect(() => {
     if (user) logout();
-  }, []);
+  }, [user, logout]);
 
   const toggleShowPassword = () => setShowPassword(!showPassword);
 
