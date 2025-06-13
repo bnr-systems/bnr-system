@@ -14,12 +14,11 @@ function CadastroPecas() {
     setValue,
     formState: { errors },
   } = useForm();
-  const { token } = useAuth(); 
+  const { token} = useAuth(); 
   const [categorias, setCategorias] = useState([]);
   const [fabricantes, setFabricantes] = useState([]);
   const [produtos, setProdutos] = useState([]);
   const [categoriaSelecionada, setCategoriaSelecionada] = useState(null);
-  const [menuOpen, setMenuOpen] = useState(false); // Controle do estado da barra lateral
 
   const [isLoading, setIsLoading] = useState(false);
   const [alerta, setAlerta] = useState("");

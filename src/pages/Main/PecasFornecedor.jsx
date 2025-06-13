@@ -18,30 +18,30 @@ const PecasFornecedor = () => {
   const [detalhesAbertos, setDetalhesAbertos] = useState(null);
 
 
-  const { token } = useAuth(); 
+  const { token, user } = useAuth(); 
 
   const navigate = useNavigate();
 
    useEffect(() => {
     const fetchPecas = async () => {
       try {
-        const response = await api.get(
-          "/pecas",
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-        const pecasData = response.data.data;
-        if (Array.isArray(pecasData)) {
-          setPecas(pecasData);
-          // Ajustar para página 1 caso não haja dados
-          if (pecasData.length > 0 && currentPage === 0) {
-            setCurrentPage(1);
-          }
-        } else {
-          console.error("Os dados recebidos não são um array.");
-          setPecas([]);
+        let allPecas = [];
+        let nextPage = "/pecas";
+        const config = {
+          headers: { Authorization: `Bearer ${token}` },
+        };
+    
+        while (nextPage) {
+          const response = await api.get(nextPage, config);
+          const dataPage = response.data.data || [];
+          allPecas = allPecas.concat(dataPage);
+          nextPage = response.data.next_page_url
+            ? response.data.next_page_url.replace("https://vps55372.publiccloud.com.br/api", "")
+            : null;
         }
+    
+        setPecas(allPecas);
+        setCurrentPage(1);
       } catch (error) {
         console.error("Erro ao buscar peças:", error);
         setPecas([]);
@@ -49,9 +49,10 @@ const PecasFornecedor = () => {
         setIsLoading(false);
       }
     };
+    
+        fetchPecas();
+      }, [token]);
 
-    fetchPecas();
-  }, [token]);
 
   useEffect(() => {
     const fetchFabricantes = async () => {

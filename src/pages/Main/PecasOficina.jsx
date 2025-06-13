@@ -62,30 +62,32 @@ const PecasOficina = () => {
       return;
     }
 
-    const fetchPecas = async () => {
-      try {
-        const response = await api.get(
-          "https://vps55372.publiccloud.com.br/api/pecas",
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-
-        const pecasData = response.data.data;
-        if (Array.isArray(pecasData)) {
-          setPecas(pecasData);
-          if (pecasData.length > 0 && currentPage === 0) {
-            setCurrentPage(1);
-          }
-        } else {
-          console.error("Os dados recebidos não são um array.");
-          setPecas([]);
-        }
-      } catch (error) {
-        console.error("Erro ao buscar peças:", error);
-        setPecas([]);
-      } finally {
-        setIsLoading(false);
-      }
+  const fetchPecas = async () => {
+  try {
+    let allPecas = [];
+    let nextPage = "/pecas";
+    const config = {
+      headers: { Authorization: `Bearer ${token}` },
     };
+
+    while (nextPage) {
+      const response = await api.get(nextPage, config);
+      const dataPage = response.data.data || [];
+      allPecas = allPecas.concat(dataPage);
+      nextPage = response.data.next_page_url
+        ? response.data.next_page_url.replace("https://vps55372.publiccloud.com.br/api", "")
+        : null;
+    }
+
+    setPecas(allPecas);
+    setCurrentPage(1);
+  } catch (error) {
+    console.error("Erro ao buscar peças:", error);
+    setPecas([]);
+  } finally {
+    setIsLoading(false);
+  }
+};
 
     fetchPecas();
   }, [token]);
@@ -357,7 +359,7 @@ const PecasOficina = () => {
     [pecas, pecasPromocao]
   );
 
-  const voltarParaTodasPecas = useCallback(() => {
+  const voltarParaallPecas = useCallback(() => {
     setMostrandoPecasSimilares(false);
     setProdutoFiltro("");
     setCurrentPage(1);
@@ -748,7 +750,7 @@ const PecasOficina = () => {
             <div className="bg-white rounded-lg shadow p-4 mb-4">
               <div className="flex items-center text-sm">
                 <button
-                  onClick={voltarParaTodasPecas}
+                  onClick={voltarParaallPecas}
                   className="text-blue-500 hover:underline flex items-center"
                 >
                   <span>Voltar para todas as peças</span>
@@ -989,40 +991,40 @@ const PecasOficina = () => {
         </div>
       )}
 
-      {/* Modal para promoções (só aparece para oficinas) */}
       {showPromotionPopup && user?.userType === "oficina" && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-[9999] flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg shadow-xl w-full max-w-sm md:max-w-lg">
-            <div className="flex justify-between items-center p-4 bg-blue-600 text-white rounded-t-lg">
-              <h2 className="text-xl font-bold">
-                Ofertas Especiais para Oficinas
-              </h2>
-              <button
-                onClick={() => setShowPromotionPopup(false)}
-                className="text-white hover:text-gray-200"
-              >
-                ✕
-              </button>
-            </div>
-            <div className="p-6">
-              <p className="text-gray-700 mb-4">
-                Confira estas peças em oferta exclusiva para o seu tipo de negócio!
-              </p>
+  <div className="fixed inset-0 bg-black bg-opacity-50 z-[9999] flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
+    <div className="bg-white rounded-lg shadow-xl w-full max-w-xs sm:max-w-sm md:max-w-lg lg:max-w-2xl">
+      <div className="flex justify-between items-center p-4 bg-blue-600 text-white rounded-t-lg">
+        <h2 className="text-lg sm:text-xl font-bold">
+          Ofertas Especiais para Oficinas
+        </h2>
+        <button
+          onClick={() => setShowPromotionPopup(false)}
+          className="text-white hover:text-gray-200 text-xl"
+        >
+          ✕
+        </button>
+      </div>
+      <div className="p-4 sm:p-6 max-h-[80vh] overflow-y-auto">
+        <p className="text-gray-700 mb-4 text-sm sm:text-base">
+          Confira estas peças em oferta exclusiva para o seu tipo de negócio!
+        </p>
 
-              {pecasPromocao.length > 0 && <Carousel items={pecasPromocao} />}
+        {pecasPromocao.length > 0 && <Carousel items={pecasPromocao} />}
 
-              <div className="mt-6 flex justify-end">
-                <button
-                  onClick={() => setShowPromotionPopup(false)}
-                  className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
-                >
-                  Ver mais tarde
-                </button>
-              </div>
-            </div>
-          </div>
+        <div className="mt-6 flex justify-end">
+          <button
+            onClick={() => setShowPromotionPopup(false)}
+            className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
+          >
+            Ver mais tarde
+          </button>
         </div>
-      )}
+      </div>
+    </div>
+  </div>
+)}
+
 
       {/* Popup de confirmação de adição ao carrinho */}
       {showCarrinhoPopup && (
