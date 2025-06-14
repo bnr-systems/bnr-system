@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import logo from "../assets/images/bnr-logo-remove.png";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "/src/context/AuthContext"; 
+import { useAuth } from "/src/context/AuthContext";
 function Header() {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
@@ -36,7 +36,9 @@ function Header() {
           className="text-white mr-4 sm:mr-8 lg:mr-16 font-bold cursor-pointer"
           onClick={() => !user && navigate("/login")}
         >
-          {user?.name ? `Olá, ${user.name.split(" ")[0]}!` : "Área do Assinante"}
+          {user?.name
+            ? `Olá, ${user.name.split(" ")[0]}!`
+            : "Área do Assinante"}
         </div>
 
         {menuOpen && user && (
@@ -56,7 +58,10 @@ function Header() {
               </li>
               <li
                 className="px-4 py-2 hover:bg-gray-200 cursor-pointer text-red-600"
-                onClick={logout} 
+                onClick={() => {
+                  logout();
+                  navigate("/login");
+                }}
               >
                 Sair
               </li>
