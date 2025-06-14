@@ -8,26 +8,29 @@ const PecasVinculadas = () => {
   const [pecas, setPecas] = useState({});
   const [vinculos, setVinculos] = useState([]);
   const [unidades, setUnidades] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [busca, setBusca] = useState("");
   const [ordem, setOrdem] = useState("data");
+  const [isFetching, setIsFetching] = useState(true);
   const [itemsPerPage, setItemsPerPage] = useState(5);
-  const [currentPage, setCurrentPage] = useState(1); // Paginação
+  const [currentPage, setCurrentPage] = useState(1); 
 
-  const userId = localStorage.getItem("id");
-  const { token } = useAuth(); 
+  const { token, user, isLoading, isAuthenticated } = useAuth(); 
   const navigate = useNavigate();
     
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      try {
-        if (!userId) {
-          console.error("userId não encontrado!");
-          return;
-        }
+    useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      navigate("/login");
+    }
+  }, [isLoading, isAuthenticated, navigate]);
 
-        const unidadesResponse = await api.get(`/unidades/user/${userId}`, {
+  // Busca dados após autenticação
+  useEffect(() => {
+    if (isLoading || !isAuthenticated || !user?.id || !token) return;
+
+    const fetchData = async () => {
+      setIsFetching(true);
+      try {
+        const unidadesResponse = await api.get(`/unidades/user/${user?.id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setUnidades(unidadesResponse.data.data || []);
@@ -37,22 +40,21 @@ const PecasVinculadas = () => {
         });
 
         const vinculosFiltrados = vinculosResponse.data.filter(
-          (v) => v.unidade?.user_id === Number(userId)
+          (v) => v.unidade?.user_id === Number(user?.id)
         );
-
         setVinculos(vinculosFiltrados);
       } catch (error) {
         console.error("Erro ao buscar dados:", error);
-        
       } finally {
-        setIsLoading(false);
+        setIsFetching(false);
       }
     };
 
     fetchData();
-  }, [token, userId]);
+  }, [isLoading, isAuthenticated, token, user?.id]);
 
   
+
 
   useEffect(() => {
     const fetchPecas = async () => {
@@ -119,6 +121,10 @@ const PecasVinculadas = () => {
   );
 
   const totalPages = Math.ceil(filteredVinculos.length / itemsPerPage);
+
+  if (isLoading || isFetching) {
+    return <div>Carregando...</div>;
+  }
 
 
   return (

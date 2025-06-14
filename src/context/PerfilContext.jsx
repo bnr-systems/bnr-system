@@ -13,7 +13,7 @@ export const usePerfil = () => {
 };
 
 export const PerfilProvider = ({ children }) => {
-  const { token } = useAuth(); // NOVO
+  const { token } = useAuth(); 
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

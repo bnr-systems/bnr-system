@@ -28,14 +28,14 @@ const VincularPecas = () => {
   const [vinculos, setVinculos] = useState([]);
   const navigate = useNavigate();
 
-  const userId = localStorage.getItem("id");
-  const { token } = useAuth(); 
+  
+  const { token, user } = useAuth(); 
 
 
   
   useEffect(() => {
     const fetchData = async () => {
-      if (!userId || !token) {
+      if (!user?.id || !token) {
         console.error("Usuário não autenticado");
         return;
       }
@@ -45,7 +45,7 @@ const VincularPecas = () => {
             api.get("/peca-modelos", {
               headers: { Authorization: `Bearer ${token}` },
             }),
-            api.get(`/unidades/user/${userId}`, {
+            api.get(`/unidades/user/${user?.id}`, {
               headers: { Authorization: `Bearer ${token}` },
             }),
             api.get("/peca-modelo-unidades", {
@@ -100,7 +100,7 @@ const VincularPecas = () => {
     };
 
     fetchData();
-  }, [token, userId]);
+  }, [token, user?.id]);
 
   const onSubmit = async (data) => {
     try {
