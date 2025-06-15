@@ -22,7 +22,8 @@ import { AuthProvider } from "./context/AuthContext";
 import { CarrinhoProvider } from "./context/CarrinhoContext";
 import { PerfilProvider } from "./context/PerfilContext";
 import PecasFornecedor from "./pages/Main/PecasFornecedor";
-import PecasRouter from "./pages/Main/PecasRouter"; // <-- NOVO
+import PecasRouter from "./pages/Main/PecasRouter"; 
+import VincularPecaModelo from "./pages/Main/VincularPecaModelo"
 
 const router = createBrowserRouter([
   {
@@ -46,6 +47,7 @@ const router = createBrowserRouter([
       { path: "/Login", element: <Login /> },
       { path: "/Perfil", element: <Perfil /> },
       { path: "/PecasRouter", element: <PecasRouter /> }, 
+      { path: "/VincularPecaModelo", element: <VincularPecaModelo /> }, 
     ],
   },
 ]);

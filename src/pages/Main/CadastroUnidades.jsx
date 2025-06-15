@@ -15,7 +15,7 @@ function CadastroUnidades() {
     watch,
     formState: { errors },
   } = useForm();
-    const { token } = useAuth(); 
+    const { token, user } = useAuth(); 
   const [estados, setEstados] = useState([]);
   const [municipios, setMunicipios] = useState([]);
   const [menuOpen, setMenuOpen] = useState(false); // Controle do estado da barra lateral
@@ -113,11 +113,10 @@ function CadastroUnidades() {
 
   // Recuperar o user_id do localStorage e definir no formulário
   useEffect(() => {
-    const userId = localStorage.getItem("id");
-    if (userId) {
-      setValue("user_id", userId);
+    if (user?.id) {
+      setValue("user_id", user?.id);
     }
-  }, [setValue]);
+  }, [user,setValue]);
 
   // Submissão do formulário
   const onSubmit = async (data) => {
@@ -136,6 +135,7 @@ function CadastroUnidades() {
       } else {
         formDataToSend.append(key, data[key]);
       }
+      
     });
 
     try {
@@ -194,6 +194,7 @@ function CadastroUnidades() {
     }
   };
 
+
   return (
     <main className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
       <Menu />
@@ -202,6 +203,7 @@ function CadastroUnidades() {
           Cadastro Unidade
         </h1>
         <form onSubmit={handleSubmit(onSubmit)}>
+          <input type="hidden" {...register("user_id")} />
           {/* Nome */}
           <div className="mb-4">
             <label

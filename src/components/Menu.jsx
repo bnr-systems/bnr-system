@@ -53,12 +53,21 @@ const Menu = () => {
           </button>
 
           {user?.userType === "fornecedor" && (
+            <>
             <button
-              className="p-4 hover:bg-gray-700 text-left w-full"
-              onClick={() => navigate("/pecasVinculadas")}
-            >
-              Peças Vinculadas
-            </button>
+                className="p-4 hover:bg-gray-700 text-left w-full"
+                onClick={() => navigate("/VincularPecaModelo")}
+              >
+                Vincular Peça a Modelo
+              </button>
+              
+              <button
+                className="p-4 hover:bg-gray-700 text-left w-full"
+                onClick={() => navigate("/pecasVinculadas")}
+              >
+                Peças Vinculadas
+              </button>
+            </>
           )}
         </nav>
       </aside>
